@@ -207,26 +207,18 @@ async function broadcastData() {
              TimestampsToReturn.Both,
              (err, monitoredItems) => {
                monitoredItems.on("changed", function(err, dataValue, index) {
-                function alarm(value){
-                  var threshold = 0.000002;
-                  if (value>pre_value){
-                    var pre_value = value;
-                    return true;
-                }else{
-                  var pre_value = value;
-                  return false;
-                }
-
-              };
-        if (index==2){
-          console.log(alarm(dataValue.value.value))
+              // const d = new Date();
+              // let ms = d.getMilliseconds();
+        if (index==0){
+          // console.log(Date.now())
+          console.log(dataValue.value.value/1000)
         }
         io.emit('exchange-data', {
 					index: index,
           value: parseFloat(dataValue.value.value.toFixed(2)),
 					//serverTimestamp: dataValue.serverTimestamp.toISOString(),
 					status: dataValue.statusCode._name,
-          alarm: alarm(parseFloat(dataValue.value.value.toFixed(2)))
+          // alarm: alarm(parseFloat(dataValue.value.value.toFixed(2)))
         })
                });
                callback();
