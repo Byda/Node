@@ -1,0 +1,13 @@
+GET http://localhost:3000/nodes
+
+###
+GET http://localhost:3000/nodes/23
+
+###
+POST http://localhost:3000/nodes
+Content-Type: application/json
+
+{
+    "id": "23",
+    "value": "345.3"
+}

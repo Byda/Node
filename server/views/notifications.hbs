@@ -1,0 +1,47 @@
+<script>
+        var socket = io()
+
+        function updateValue() {
+            socket.on("exchange-data", function(data){
+            switch(data.index){
+                case 1:
+                $("#Temper").html(data.value)
+                alarm(data.value, 18, 19, 21, 22)
+                case 2:
+                $("#Press").html(data.value)
+                case 3:
+                $("#NO").html(data.value)
+                case 4:
+                $("#NO2").html(data.value)
+            }
+            
+        })
+        }
+        updateValue();
+
+        let pre_Value = 0;
+        function alarm(value, LL, L, H, HH) {
+            if(value-pre_Value>HH){
+                alert("HH")
+            }else if (value-pre_Value>H)
+                alert("H")
+            pre_Value = value;
+        }
+        $(document).ready(function(){
+        });
+</script>
+
+<div id="Temper" style="display: none;"></div>
+<div id="Press" style="display: none;"></div>
+<div id="NO" style="display: none;"></div>
+<div id="NO2" style="display: none;"></div>
+
+<div class="alert alert-success" role="alert" >
+  A simple success alert—check it out!
+</div>
+<div class="alert alert-danger" role="alert">
+  A simple danger alert—check it out!
+</div>
+<div class="alert alert-warning" role="alert">
+  A simple warning alert—check it out!
+</div>
