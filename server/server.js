@@ -190,6 +190,27 @@ async function broadcastData() {
             nodeId: resolveNodeId("ns=2;i=11103"),
             attributeId: AttributeIds.Value
         },
+        {
+          nodeId: resolveNodeId("ns=2;i=11104"),
+          attributeId: AttributeIds.Value
+      },
+        {
+          nodeId: resolveNodeId("ns=2;i=11105"),
+          attributeId: AttributeIds.Value
+      },
+    {
+        nodeId: resolveNodeId("ns=2;i=11106"),
+          attributeId: AttributeIds.Value
+    },
+      {
+          nodeId: resolveNodeId("ns=2;i=11107"),
+          attributeId: AttributeIds.Value
+      },
+      {
+        nodeId: resolveNodeId("ns=2;i=11108"),
+        attributeId: AttributeIds.Value
+  },
+      
       {
           nodeId: resolveNodeId("ns=2;i=11114"),
           attributeId: AttributeIds.Value
@@ -209,10 +230,11 @@ async function broadcastData() {
                monitoredItems.on("changed", function(err, dataValue, index) {
               // const d = new Date();
               // let ms = d.getMilliseconds();
-        if (index==0){
+        if (index==3){
           // console.log(Date.now())
-          console.log(dataValue.value.value/1000)
-        }
+          console.log(" Temp  "+ dataValue.value.value)
+        }else if (index==4)
+          console.log(dataValue.value.value)
         io.emit('exchange-data', {
 					index: index,
           value: parseFloat(dataValue.value.value.toFixed(2)),
