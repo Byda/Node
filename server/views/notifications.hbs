@@ -1,12 +1,29 @@
+ <ul id="myList">
+   <li>Duy</li>
+</ul>
+        <script src="./socket.io/socket.io.js"></script>
+
 <script>
-        var socket = io()
+        var socket = io()  
 
         function updateValue() {
             socket.on("exchange-data", function(data){
             switch(data.index){
-                case 1:
-                $("#Temper").html(data.value)
-                alarm(data.value, 18, 19, 21, 22)
+                case 0:
+                  $("#Temper").html(data.value)
+                  // alarm(data.value, 18, 19, 21, 22)
+                  if (alamr1(data.value,18, 19, 22, 23) == 1){
+                      const alarmItem = document.createElement('li');
+                      alarmItem.textContent = "High Risk"
+                      myList.appendChild(alarmItem);
+                  }
+      
+                  else if (alamr1(data.value,18, 19, 22, 23) == 2){
+                    const alarmItem = document.createElement('li');
+                      alarmItem.textContent = "Risk"
+                      myList.appendChild(alarmItem);
+                  }
+                 
                 case 2:
                 $("#Press").html(data.value)
                 case 3:
@@ -17,22 +34,55 @@
             
         })
         }
+        //const textnode = document.createTextNode("High Risk");
         updateValue();
-
-        let pre_Value = 0;
-        function alarm(value, LL, L, H, HH) {
-            if(value-pre_Value>HH){
-                alert("HH")
-            }else if (value-pre_Value>H)
-                alert("H")
-            pre_Value = value;
+        function alamr1(data, LL, L, H, HH){
+                    val = data
+                    if (val>HH)
+                      return 1
+                    else if (val>H && val<HH)
+                      return 2
+                    else if (val<L && val>LL)
+                      return 3
+                    else if (val<LL)
+                      return 4
         }
+
+       /* const tag = document.getElementById('number')
+        tag.addEventListener('Alarmlevel', function(e){
+          tag.textContent = e.alarm;
+        })
+
+        function getAlarm(data, LL, L, H, HH){
+          return new Promise((resolve, reject)=>
+            const event = new CustomEvent('Alarmlevel', {
+            alarm: 1
+          });
+          resolve();
+          )
+          
+        }
+
+        getAlarm(); */
+
+     
+
         $(document).ready(function(){
         });
+
+      function createNoti(textnode){
+          const node = document.createElement("li");
+          node.textContent = "Water"
+          myList.appendChild(node);
+         }      
+        createNoti();
+
 </script>
 
-<div id="Temper" style="display: none;"></div>
-<div id="Press" style="display: none;"></div>
+<h1 id="number">0</h1>
+
+<div id="Temper">Duy</div>
+<div id="Press" style="display: none;">Tsfsdf</div>
 <div id="NO" style="display: none;"></div>
 <div id="NO2" style="display: none;"></div>
 

@@ -4,15 +4,11 @@
 
         function updateValue() {
             socket.on("exchange-data", function(data){
- 
                for (i=0; i<11; i++){
                     const indicator = [];
                     indicator[i] = data.data[0][i].indicator
                     $("#"+ indicator[i]).html(data.data[0][i].value)
                 }  
-
-  
-
             })
         }
         updateValue();
@@ -38,7 +34,7 @@
   <a href="#" class="list-group-item list-group-item-action active">
     Stations list
   </a>
-  <a href="./tram1.hbs" class="list-group-item list-group-item-action">
+  <a href="#" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-water"></i>
       Tram 1 Long Thanh</a>
   <a href="#" class="list-group-item list-group-item-action">
@@ -66,7 +62,7 @@
 </div>
 
 <div style="float: right; width: 90%" >
-    <h3 style="text-align: center; font-size: xx-large;" >Bach Khoa Station</h3>
+    <h3 style="text-align: center; font-size: xx-large;" >Tram Long Thanh</h3>
     <div id="div1" style="float: left; width: 50%; height: 50%;">
         <div style="font-size: x-large; text-align: center;" id="text1">Temperature</div>
         <canvas id="myChart" style="width:100%;max-width:700px"></canvas> 
