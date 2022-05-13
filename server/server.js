@@ -102,7 +102,7 @@ class Data {
     calculateDuration() {
       if(this.severity == 1 || this.severity == 2) {
         this.duration = Date.now() - this.startTime;
-      } else this.uration = 0;
+      } else this.duration = 0;
   }
 
     calculateDeadBand() {
@@ -243,7 +243,7 @@ class Data {
 }
 
 
-const URL1 = new Infor("opc.tcp://20.205.122.62:3000/", 0, "Tram 1", "KCN Long Thanh")
+const URL1 = new Infor("opc.tcp://VPS:4840/", 0, "Tram 1", "KCN Long Thanh")
 const URL2 = new Infor("opc.tcp://20.213.60.198:3000/", 0, "Tram 2", "KCN Bien Hoa")
 
 
@@ -415,9 +415,9 @@ async function broadcastData(OS_index, URL) {
     
         // step 1 : connect to
         function(callback)  {
-            client[OS_index].connect(URL.endpoint, function(err) {
+            client[OS_index].connect(URL, function(err) {
               if (err) {
-                console.log(" cannot connect to endpoint :", URL.endpoint);
+                console.log(" cannot connect to endpoint :",URl);
               } else {
                 console.log("connected !");
               }
@@ -504,7 +504,7 @@ async function broadcastData(OS_index, URL) {
              (err, monitoredItems) => {
                monitoredItems.on("changed", function(err, dataValue, index) {
 
-        DataList[OS_index][index].value = dataValue.value.value
+        DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
         DataList[OS_index][index].calculateAlarm
 
         // console.log(DataList[OS_index][0]
