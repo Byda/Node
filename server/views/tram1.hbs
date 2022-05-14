@@ -6,8 +6,8 @@
             socket.on("exchange-data", function(data){
                for (i=0; i<11; i++){
                     const indicator = [];
-                    indicator[i] = data.data[0][i].indicator
-                    $("#"+ indicator[i]).html(data.data[0][i].value)
+                    indicator[i] = data.data[1][i].indicator
+                    $("#"+ indicator[i]).html(data.data[1][i].value)
                 }  
             })
         }

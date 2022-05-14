@@ -5,67 +5,46 @@
 
 <script>
         var socket = io()  
+        let severity1 = [];
+        
+        function checkAlarm (){
+              socket.on("exchange-data", function(data){
+               {{!-- for (i=0; i<11; i++){
+                    severity1[i] = data.data[1][i].severity
+                    $("#"+ severity1[i]).html(data.data[1][i].severity)
+                } --}}
+                
+                setAlarm(){
+                  newListAlamr[]
+                  //condition: !ACK && data.data[1][i].severity==1||2
+                  //do: newListAlamr.add (data.data[1][i])
+                }
 
-        function updateValue() {
-            socket.on("exchange-data", function(data){
-            switch(data.index){
-                case 0:
-                  $("#Temper").html(data.value)
-                  // alarm(data.value, 18, 19, 21, 22)
-                  if (alamr1(data.value,18, 19, 22, 23) == 1){
-                      const alarmItem = document.createElement('li');
-                      alarmItem.textContent = "High Risk"
-                      myList.appendChild(alarmItem);
-                  }
-      
-                  else if (alamr1(data.value,18, 19, 22, 23) == 2){
-                    const alarmItem = document.createElement('li');
-                      alarmItem.textContent = "Risk"
-                      myList.appendChild(alarmItem);
-                  }
-                 
-                case 2:
-                $("#Press").html(data.value)
-                case 3:
-                $("#NO").html(data.value)
-                case 4:
-                $("#NO2").html(data.value)
+                const alarmItem = document.createElement('li');
+                
+                if(data.data[1][0]){
+                   if (data.data[1][0].severity==2){
+                  alarmItem.textContent = "High Risk"
+                  myList.appendChild(alarmItem);
+                }else if(data.data[1][0].severity==1) {
+                  alarmItem.textContent = "Risk"
+                  myList.appendChild(alarmItem);
+                }   
+                }
+               
+            })
             }
-            
-        })
+
+    var something = (function() {
+      var executed = false;
+      return function() {
+        if (!executed) {
+            executed = true;
+            checkAlarm()
         }
-        //const textnode = document.createTextNode("High Risk");
-        updateValue();
-        function alamr1(data, LL, L, H, HH){
-                    val = data
-                    if (val>HH)
-                      return 1
-                    else if (val>H && val<HH)
-                      return 2
-                    else if (val<L && val>LL)
-                      return 3
-                    else if (val<LL)
-                      return 4
-        }
-
-       /* const tag = document.getElementById('number')
-        tag.addEventListener('Alarmlevel', function(e){
-          tag.textContent = e.alarm;
-        })
-
-        function getAlarm(data, LL, L, H, HH){
-          return new Promise((resolve, reject)=>
-            const event = new CustomEvent('Alarmlevel', {
-            alarm: 1
-          });
-          resolve();
-          )
-          
-        }
-
-        getAlarm(); */
-
-     
+    };
+})();
+something();
 
         $(document).ready(function(){
         });

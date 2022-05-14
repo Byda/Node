@@ -3,7 +3,6 @@ const User = require("../models/user");
 const LoginRoute = express.Router();
 const argon2 = require("argon2");
 const bodyParser = require("body-parser");
-var session = require('express-session')
 
 var urlencodedParser = bodyParser.urlencoded({extended: false})
 
@@ -12,7 +11,6 @@ LoginRoute.get('/', (req, res) => {
 })
 LoginRoute.post('/', urlencodedParser, async function (req, res) {
     const {username, password} = req.body
-
     if(!username || !password)
         return res
         .status(400)
@@ -28,9 +26,9 @@ LoginRoute.post('/', urlencodedParser, async function (req, res) {
         if (!unHashPass){
             return res.status(400).json({status: false, message: "Incorrect password"})
         } else {
-            req.session.isAuthenticated = true;
-            req.session.userAuth = user
-            res.redirect('./home')
+                req.session.isAuthenticated = true;
+                req.session.userAuth = user
+                res.redirect('./home')
         }
 
     } catch (error) {
