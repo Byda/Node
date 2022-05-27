@@ -1,6 +1,7 @@
 const { OPCUAClient, makeBrowsePath, DataType, AttributeIds, resolveNodeId, TimestampsToReturn, computeSignature, NodeId} = require("node-opcua");
 const async = require("async");
-
+const Node = require("./models/node")
+const excel = require('excel4node')
 
 class Infor {
     constructor (endpoint, OS_Type, OS_Number, OS_Location){
@@ -242,8 +243,8 @@ class Infor {
     }
   }
   
-  const URL1 = new Infor("opc.tcp://20.205.122.62:3000/", 0, "Tram 1", "KCN Long Thanh")
-  const URL2 = new Infor("opc.tcp://20.213.60.198:3000/", 0, "Tram 2", "KCN Bien Hoa")
+  const URL1 = new Infor("opc.tcp://20.205.122.62:3001/", 0, "Tram 1", "KCN Long Thanh")
+  const URL2 = new Infor("opc.tcp://20.213.60.198:3001/", 0, "Tram 2", "KCN Bien Hoa")
   
 // var Total = [];
 var InforList = []
@@ -252,12 +253,12 @@ var DataList = []
 InforList[0] = URL1;
 InforList[1] = URL2;  
 
-module.exports = function(io){
+module.exports = function(){
 
 for(i=0; i<InforList.length; i++) {
     var _Data = []
 
-    if(InforList[i].OS_Type == 0) { //Khi thai
+    if([i].OS_Type == 0) { //Khi thai
       _Data[0] = new Data("Temperature", 0, "°C", 60, 70, 90, 100, 3)
       _Data[1] = new Data("Pressure", 0, "mbar", 800, 900, 1100, 1200, 20)
       _Data[2] = new Data("NO", 0, "mg/m3", 100, 110, 130, 140, 3)
@@ -307,9 +308,10 @@ for(i=0; i<InforList.length; i++) {
     //   DataList[10] = new Data("TOC", 0, "mg/L", 130, 140, 160, 170, 3)
     // }
 
-    DataList[i] = _Data
 
   }
+  DataList[i] = _Data
+
 }
 
 let the_session = [], the_subscription=[]
@@ -320,21 +322,11 @@ const connectionStrategy = {
   };
   var client = [];
 
-  for(i=0; i<InforList.length; i++) {
+  for(i=0; i<4; i++) {
     client[i] = OPCUAClient.create();
-    client[i].on("backoff", (retry, delay) =>
-      console.log(
-        "still trying to connect to ",
-        ": retry =",
-        retry,
-        "next attempt in ",
-        delay / 1000,
-        "seconds"
-      )
-  );
   }
 
-  async function broadcastData(OS_index, URL) {
+async function broadcastData(OS_index, URL, numIndicator) {
   
 	async.series([
     
@@ -405,7 +397,7 @@ const connectionStrategy = {
         },
         function(callback) {
            // install monitored item
-           const lenght = 11;
+           var length = numIndicator;
            var itemsToMonitor=[]
 
           for (i=0; i<lenght; i++){
@@ -431,13 +423,14 @@ const connectionStrategy = {
 
         DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
         DataList[OS_index][index].calculateAlarm
-                if(index==0)
-        // console.log(DataList[1][0].value +"-----"+ URL)
-        // console.log(Date_List[])
-        io.emit('exchange-data', {
-          infor: InforList,
-					data: DataList
-        })
+        console.log(DataList[0][0])
+
+        // if (index==0)
+        //         console.log(DataList[0][1])
+        // io.emit('exchange-data', {
+        //   infor: InforList,
+				// 	data: DataList
+        // })
                });
                callback();
              }
@@ -474,11 +467,43 @@ const connectionStrategy = {
         // },
 
   ])
+
 }
 
 
-for(i=0; i<InforList.length; i++) {
-    broadcastData(i, InforList[i].endpoint);
+
+const header = ["ID", "Value", "TimeStamp"]
+async function CreateExcel(){
+  var workbook = new excel.Workbook()
+  var worksheet = workbook.addWorksheet('Sheet 1');
+
+  let column = 1;
+  header.forEach((item)=>{
+    worksheet.cell(1, column++).string(item)
+  })
+  let row = 2
+  DataList[1][0].forEach((data)=>{
+    let colIndex = 2
+      worksheet.cell(row, colIndex).string(DataList[1][0].value)
+    row++;
+  })
+  workbook.write('report.xlsx');
+}
+
+
+
+// setInterval(report, 5000)
+async function report(){
+  try {
+      newNode = new Node({id: InforList[1].endpoint + InforList[1].OS_Location, value: DataList[1][0].value})
+      await newNode.save()
+      console.log("New data is added")
+  } catch (error) {
+      console.log(err)
+  }
+}
+for(i=0; i<4; i++) {
+    broadcastData(i, InforList[i].endpoint, DataList[i].lenght);
   }
 }
 

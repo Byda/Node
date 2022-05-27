@@ -16,7 +16,7 @@
               <a class="nav-link" href="./trend">Stations</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link disabled" href="./notifications">Notifications</a>
+              <a class="nav-link disabled" href="/alarm/0">Alarms</a>
             </li>
           </ul>
 
@@ -25,26 +25,31 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
           </form>
            <ul class="navbar-nav">
-         
-                    <li class="nav-item dropdown">
+             {{#if lcIsAuthenticated}}
+               <li class="nav-item dropdown">
               <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Welcome <b>{{lcUser.username}}</b>
               </a>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="./login/profile">
+                <a class="dropdown-item" href="/account/profile">
                   <i class="fa fa-user" aria-hidden="true"></i>
                   Profile</a>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="/account/logout">
                   <i class="fa fa-sign-out" aria-hidden="true"></i>
                   Logout</a>
               </div>
             </li>
-  
-            <li class="nav-item">
-              <a class="nav-link" href="./login">
+             {{else}}
+                     <li class="nav-item">
+              <a class="nav-link" href="/account">
                 <i class="fa fa-sign-in" aria-hidden="true"></i>
                 Login</a>
             </li> 
+                    
+             {{/if}}
+       
+          
+     
      
           </ul>
         </div>

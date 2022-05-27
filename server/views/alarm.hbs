@@ -1,0 +1,70 @@
+
+<div class="row">
+    <div class="col-sm-2">
+        <div class="card">
+            <h5 class="card-header">Locations</h5>
+            <div class="list-group">
+                {{#each lcLocations}}
+                <a href="./{{id}}" class="list-group-item list-group-item-action {{#if isActive}}active{{/if}}">
+                    {{OS_Location}}
+                </a>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="card">
+        <h4 class="card-header" style="text-align: center">Alarms</h4>
+{{#if lcIsAuthenticated}}
+{{#if lcUser.admin}}
+    {{#if this.empty}}
+        <div class="card-body">
+            <p class="card-text">Khong co alarm</p>
+        </div>
+    {{else}}
+        <div class="card-body">
+            <div class="row">
+                {{#each this.alarms}}
+                <div class="col-sm-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">OS_ID: {{OS_ID}}     Indicator: {{indicator}}</h6>
+                            <p class="card-text text-danger">{{content}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a name="" id="" class="btn btn-outline-success" href="#" role="button">
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                ACK</a>
+                        </div>
+                    </div>
+                    
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+    {{/if}}
+    {{else}}
+        <div class="card-body">
+            <div class="row">
+                {{#each this.alarms}}
+                <div class="col-sm-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">OS_ID: {{OS_ID}}     Indicator: {{indicator}}</h6>
+                            <p class="card-text text-danger">{{content}}</p>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+{{/if}}
+{{/if}}
+
+</div>
+    </div>
+</div>

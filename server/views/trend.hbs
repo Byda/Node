@@ -2,18 +2,21 @@
 <script>
         var socket = io()
 
-        function updateValue() {
-            socket.on("exchange-data", function(data){
- 
-               for (i=0; i<11; i++){
-                    const indicator = [];
-                    indicator[i] = data.data[0][i].indicator
-                    $("#"+ indicator[i]).html(data.data[0][i].value)
-                }  
-            })
-        }
-        updateValue();
+        let  clientid, infor
+        
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 0)
+        })
 
+        socket.on('vps-send-data', (data)=>{
+                for (i=0; i<11; i++){
+                    const indicator = [];
+                    indicator[i] = data.data[i].indicator
+                    $("#"+ indicator[i]).html(data.data[i].value)
+                } 
+        })
+        
         $(document).ready(function(){
         });
 
@@ -35,31 +38,19 @@
   <a href="#" class="list-group-item list-group-item-action active">
     Stations list
   </a>
+  <a href="./trend" class="list-group-item list-group-item-action">
+      <i class="fa-solid fa-water"></i>
+      Tram 1 <b>Bach Khoa</b></a>
   <a href="./tram1" class="list-group-item list-group-item-action">
-      <i class="fa-solid fa-water"></i>
-      Tram 1 Long Thanh</a>
-  <a href="#" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-house-flood-water"></i>
-      Tram 2 Long Thanh</a>
-  <a href="#" class="list-group-item list-group-item-action">
+      Tram 2 Bach Khoa</a>
+  <a href="./tram2" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-wind"></i>
-      Tram 3 Long Thanh</a>
-  <a href="#" class="list-group-item list-group-item-action">
+      Tram 3 Bach Khoa</a>
+  <a href="./tram3" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-industry"></i>
-      Tram 4 Long Thanh</a>
-      <a href="#" class="list-group-item list-group-item-action">
-      <i class="fa-solid fa-water"></i>
+      Tram 4 Bach Khoa</a>
 
-      Tram 1 Bien Hoa</a>
-  <a href="#" class="list-group-item list-group-item-action">
-      <i class="fa-solid fa-house-flood-water"></i>
-      Tram 2 Bien Hoa</a>
-  <a href="#" class="list-group-item list-group-item-action">
-      <i class="fa-solid fa-wind"></i>
-      Tram 3 Bien Hoa</a>
-  <a href="#" class="list-group-item list-group-item-action">
-      <i class="fa-solid fa-industry"></i>
-      Tram 4 Bien Hoa</a>
 </div>
 
 <div style="float: right; width: 90%" >

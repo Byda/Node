@@ -1,64 +1,78 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io()
-    socket.on("exchange-data", function(data){
-        switch(data.index){
-            case 1:
-            if (data.alarm)
-                alert("ssfd")
-            case 2:
-            $('h3').html(data.value)
-        }  
-    })
-    socket.on("exchange-data2", function(data){
-        switch(data.index){
-            case 1:
-            $("h4").html(data.value)
-            case 2:
-            $('h5').html(data.value)
-        }  
-    })
+        let  clientid, infor
+        
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 0)
+            console.log(clientid)
+        })
+
+        socket.on('vps-send-data', (data)=>{
+            if (data.data[0].value){
+            $("h2").html("Connected")
+            }
+            for(i=0;i<11;i++){
+            if (data.data[0].severity)
+                $("h3").html("Warning!!!")
+            }
+        })
+
     $(document).ready(function(){
-        $("#btn").click(function(){
-                $.get('/about', (req, res) =>{
-                res.render('about');
-                })
-            });
     });
 
 </script>
+<style>
+    h2{font-size: small; color: green; text-align: center;}
+    h3{font-size: small;color: rgb(255, 174, 0);text-align: center;}
+</style>
 
-<div id="googleMap" style="width: 100%;;height: 800px;;"></div>
-
+<div id="googleMap" style="width: 100%;;height: 750px;;"></div>
 <script>
+    
         function myMap() {
         var hcmut = {lat: 10.772895, lng: 106.659809}
         var bienhoa = {lat: 10.956918, lng: 106.865269}
+        var mytho = {lat: 10.367031, lng: 106.368213}
+
         var map = new google.maps.Map(document.getElementById("googleMap"),{
             center: hcmut,
-            zoom:7,
+            zoom:10,
         })
         const marker = new google.maps.Marker({
-            position: {lat: 10.772895, lng: 106.659809}, 
+            position: hcmut,
             map: map,
         })
         const marker2 = new google.maps.Marker({
             position: bienhoa,
             map: map,
         })
+        const marker3 = new google.maps.Marker({
+            position: mytho,
+            map: map,
+        })
         const infoWindow = new google.maps.InfoWindow({
-            content: "Bach Khoa Station: <br> Pressure: <h2></h2> <br>  Temperature: <h3></h3>",
+            content: "<b>Bach Khoa Station:</b> <br> Status: <h2></h2> Warning: <h3></h3>",
             disableAutoPan: true,
         });
         const infoWindow2 = new google.maps.InfoWindow({
             content: "Bien Hoa Station: <br> Pressure: <h4></h4> <br>  Temperature: <h5></h5>",
             disableAutoPan: true,
         });
+        const infoWindow3 = new google.maps.InfoWindow({
+            content: "My Tho Station: <br> Pressure: <h4></h4> <br>  Temperature: <h5></h5>",
+            disableAutoPan: true,
+        });
+
         marker.addListener("click", () => {
           infoWindow.open(map, marker);
         });
         marker2.addListener("click", ()=>{
             infoWindow2.open(map, marker2);
+        })
+        marker3.addListener("click", ()=>{
+            infoWindow3.open(map, marker3);
         })
     }
     </script>
