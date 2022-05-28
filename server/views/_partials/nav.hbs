@@ -16,8 +16,13 @@
               <a class="nav-link" href="./trend">Stations</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link disabled" href="#">Notifications</a>
+              <a class="nav-link " href="/alarm/0">Alarms</a>
             </li>
+          {{#if lcUser.admin}}
+            <li class="nav-item">
+              <a class="nav-link " href="/write">Write</a>
+            </li>
+          {{/if}}
           </ul>
 
           <form class="form-inline my-2 my-lg-0 mr-auto">
@@ -25,27 +30,32 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
           </form>
            <ul class="navbar-nav">
-          {{#if lcIsAuthenticated}}
-                    <li class="dropdown">
+             {{#if lcIsAuthenticated}}
+               <li class="nav-item dropdown">
               <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Welcome <b>{{lcIsAuthenticated}}</b>
+                Welcome <b>{{lcUser.username}}</b>
               </a>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="./login/profile">
+                <a class="dropdown-item" href="/account/profile">
                   <i class="fa fa-user" aria-hidden="true"></i>
                   Profile</a>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="/account/logout">
                   <i class="fa fa-sign-out" aria-hidden="true"></i>
                   Logout</a>
               </div>
             </li>
-          {{else}}
-            <li class="nav-item">
-              <a class="nav-link" href="./login">
+             {{else}}
+                     <li class="nav-item">
+              <a class="nav-link" href="/account">
                 <i class="fa fa-sign-in" aria-hidden="true"></i>
                 Login</a>
             </li> 
-            {{/if}}
+                    
+             {{/if}}
+       
+          
+     
+     
           </ul>
         </div>
       </nav>

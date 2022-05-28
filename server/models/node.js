@@ -5,20 +5,14 @@ const nodeSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
-
     value: {
-        type: String,
+        type: Number,
         required: true
     },
-
-    status: {
-        type: Boolean,
-    },
-
     timestamp: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     }
 })
 
-module.exports = mongoose.model('Node', nodeSchema);
+module.exports = mongoose.model('node', nodeSchema);

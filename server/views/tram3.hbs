@@ -1,15 +1,17 @@
 <script src="./socket.io/socket.io.js"></script>
 <script>
-        var socket = io()
+             var socket = io()
 
         let  clientid, infor
         
         socket.on('vps-send-clientID',(id)=>{
             clientid = id.clientID 
-            socket.emit('client-send-OS_index', clientid, 0)
+            socket.emit('client-send-OS_index', clientid, 3)
+            console.log(clientid)
         })
 
         socket.on('vps-send-data', (data)=>{
+            console.log(data.data[3])
                 for (i=0; i<11; i++){
                     const indicator = [];
                     indicator[i] = data.data[i].indicator
@@ -22,16 +24,16 @@
 
 </script>
     <div id="Temperature" style="display: none;"></div>
-    <div id="Pressure" style="display: none;"></div>
-    <div id="NO" style="display: none;"></div>
-    <div id="NO2" style="display: none;"></div>
-    <div id="CO" style="display: none;"></div>
-    <div id="SO2" style="display: none;"></div>
-    <div id="O2" style="display: none;"></div>
-    <div id="H2S" style="display: none;"></div>
-    <div id="NH3" style="display: none;"></div>
-    <div id="Hg" style="display: none;"></div>
-    <div id="PM" style="display: none;"></div>
+    <div id="pH" style="display: none;"></div>
+    <div id="TSS" style="display: none;"></div>
+    <div id="COD" style="display: none;"></div>
+    <div id="DO" style="display: none;"></div>
+    <div id="NO3-" style="display: none;"></div>
+    <div id="PO4+" style="display: none;"></div>
+    <div id="NH4+" style="display: none;"></div>
+    <div id="Total P" style="display: none;"></div>
+    <div id="Total N" style="display: none;"></div>
+    <div id="TOC" style="display: none;"></div>
 
 
 <div class="list-group" style="float: left; width: 10%">
@@ -40,7 +42,7 @@
   </a>
   <a href="./trend" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-water"></i>
-      Tram 1 <b>Bach Khoa</b></a>
+      Tram 1 Bach Khoa </a>
   <a href="./tram1" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-house-flood-water"></i>
       Tram 2 Bach Khoa</a>
@@ -49,12 +51,13 @@
       Tram 3 Bach Khoa</a>
   <a href="./tram3" class="list-group-item list-group-item-action">
       <i class="fa-solid fa-industry"></i>
-      Tram 4 Bach Khoa</a>
+      Tram 4 <b>Bach Khoa</b></a>
+
 
 </div>
 
 <div style="float: right; width: 90%" >
-    <h3 style="text-align: center; font-size: xx-large;" >Bach Khoa Station</h3>
+    <h3 style="text-align: center; font-size: xx-large;" >Tram Bach Khoa</h3>
     <div id="div1" style="float: left; width: 50%; height: 50%;">
         <div style="font-size: x-large; text-align: center;" id="text1">Temperature</div>
         <canvas id="myChart" style="width:100%;max-width:700px"></canvas> 
@@ -63,7 +66,7 @@
             type: "line",
             data: {
                 datasets: [{
-                    label: "Temperature",
+                    label: "ºC",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -101,14 +104,14 @@
  
     </div>
     <div id="div2" style="float: right; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">Pressure</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">pH</div>
         <canvas id="myChart2" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart2", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "Pressure",
+                    label: "",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -132,7 +135,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("Pressure").innerHTML
+                                    y: document.getElementById("pH").innerHTML
                                 })
                             });
                         }
@@ -146,14 +149,14 @@
  
     </div>
     <div id="div3" style="float: left; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">NO</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">TSS</div>
         <canvas id="myChart3" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart3", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "NO",
+                    label: "mg/L",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -177,7 +180,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("NO").innerHTML
+                                    y: document.getElementById("TSS").innerHTML
                                 })
                             });
                         }
@@ -191,14 +194,14 @@
  
     </div>
     <div id="div4" style="float: right; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">NO2</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">COD</div>
         <canvas id="myChart4" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart4", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "NO2",
+                    label: "mg/L",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -222,7 +225,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("NO2").innerHTML
+                                    y: document.getElementById("COD").innerHTML
                                 })
                             });
                         }
@@ -236,14 +239,14 @@
  
     </div>
     <div id="div5" style="float: left; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">CO</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">DO</div>
         <canvas id="myChart5" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart5", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "CO",
+                    label: "mg/L",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -267,7 +270,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("CO").innerHTML
+                                    y: document.getElementById("DO").innerHTML
                                 })
                             });
                         }
@@ -281,14 +284,14 @@
  
     </div>
     <div id="div6" style="float: right; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">SO2</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">NO3-</div>
         <canvas id="myChart6" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart6", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "SO2",
+                    label: "mg/L",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -312,7 +315,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("SO2").innerHTML
+                                    y: document.getElementById("NO3-").innerHTML
                                 })
                             });
                         }
@@ -326,14 +329,14 @@
  
     </div>
     <div id="div7" style="float: left; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">O2</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">PO4+</div>
         <canvas id="myChart7" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart7", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "O2",
+                    label: "mg/L",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -357,7 +360,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("O2").innerHTML
+                                    y: document.getElementById("PO4+").innerHTML
                                 })
                             });
                         }
@@ -371,14 +374,14 @@
  
     </div>
     <div id="div8" style="float: left; width: 50%; height: 50%;">
-        <div style="font-size: x-large; text-align: center;" id="text1">H2S</div>
+        <div style="font-size: x-large; text-align: center;" id="text1">NH4+</div>
         <canvas id="myChart8" style="width:100%;max-width:700px"></canvas> 
                <script>
             new Chart("myChart8", {
             type: "line",
             data: {
                 datasets: [{
-                    label: "H2S",
+                    label: "mg/L",
                     backgroundColor: "rgba(0,0,0,1.0)",
                     borderColor: "rgba(0,0,0,0.1)",
                     data: []
@@ -402,7 +405,7 @@
                             chart.data.datasets.forEach(dataset => {
                                     dataset.data.push({
                                     x: Date.now(),
-                                    y: document.getElementById("H2S").innerHTML
+                                    y: document.getElementById("NH4+").innerHTML
                                 })
                             });
                         }

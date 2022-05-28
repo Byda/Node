@@ -1,0 +1,109 @@
+<script>
+
+        function Func(val){
+            alert(val)
+            var ackuser = document.getElementById("user").innerHTML 
+            $.get('alarm/ack/'+val+'/'+ackuser, ()=>console.log(val))
+
+        }
+        function send(val){
+            var type = parseInt(val)
+            $.get('/report/'+type, (data)=>console.log(data))
+        }
+            $(document).ready(function(){
+                   
+            })
+</script>
+<div class="row">
+    <div class="col-sm-2">
+        <div class="card">
+            <h5 class="card-header">OutStion Types</h5>
+            <div class="list-group">
+                {{#each lcTypes}}
+                <a href="./{{id}}" class="list-group-item mt-3 list-group-item-action {{#if isActive}}active{{/if}}">
+                    {{name}}
+                </a>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10">
+
+
+        <div class="card">
+        <div class="card-body">
+            <span>Report Excel</span>
+
+        <div class="dropdown show float-right">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           Choose OS_Type
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="OS_Type">
+            <a class="dropdown-item" id="0" href="#" onclick="send(this.id)">Khi thai</a>
+            <a class="dropdown-item" id="1" href="#" onclick="send(this.id)">Khong khi</a>
+            <a class="dropdown-item" id="2" href="#" onclick="send(this.id)">Nuoc mat</a>
+            <a class="dropdown-item" id="3" href="#" onclick="send(this.id)">Nuoc ngam</a>
+        </div>
+        </div>
+        </div>
+        </div>
+
+        <div class="card">
+        <h4 class="card-header" style="text-align: center">Alarms</h4>
+{{#if lcIsAuthenticated}}
+    <div id="user" style="display: none;">{{lcUser.username}}</div>
+{{#if lcUser.admin}}
+    {{#if this.empty}}
+        <div class="card-body">
+            <p class="card-text">Khong co alarm</p>
+        </div>
+    {{else}}
+        <div class="card-body">
+            <div class="row">
+                {{#each this.alarms}}
+                <div class="col-sm-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Location: {{OS_Location}}     Indicator: {{indicator}}</h6>
+                            <p class="card-text text-danger">{{content}}</p>
+                        </div>
+                        <div id="id" style="display: none;">{{_id}}</div>
+                        <div class="card-footer">
+                            <a name="btn" id="{{_id}}" class="btn btn-outline-success" href="#" role="button"  onclick="Func(this.id)">
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                ACK
+                                </a>
+                        </div>
+                    </div>
+                    
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+    {{/if}}
+    {{else}}
+        <div class="card-body">
+            <div class="row">
+                {{#each this.alarms}}
+                <div class="col-sm-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Location: {{OS_Location}}     Indicator: {{indicator}}</h6>
+                            <p class="card-text text-danger">{{content}}</p>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+{{/if}}
+{{/if}}
+
+</div>
+    </div>
+</div>

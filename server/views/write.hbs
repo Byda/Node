@@ -1,0 +1,37 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+        var socket = io()
+
+
+        function update(val){
+            document.getElementById('txtInput').value = val
+        }
+
+        $(document).ready(function(){
+            $("#btnApply").click(()=>{
+                var value = parseInt($("#txtInput").val());
+                alert(value)
+                socket.emit('client-send-duty', value)
+            })
+        });
+
+</script>
+
+<div class="col-sm-8" style="margin-top: 100px;">
+
+    <label for="customRange1" class="form-label">Example range</label>
+    <input type="range" class="form-range" id="customRange1" min="0" max="100" onchange="update(this.value)">
+    <input type="text" value="" id="txtInput">
+    <input type="button" id="btnApply" value="Apply">
+
+    <h1></h1>
+
+</div>
+
+<div class="col-sm-4">
+
+</div>
+
+
+
+

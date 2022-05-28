@@ -1,47 +1,75 @@
+ <ul id="myList">
+   <li>Duy</li>
+</ul>
+        <script src="./socket.io/socket.io.js"></script>
+<style>
+  .alarm{}
+</style>
+
 <script>
-        var socket = io()
-
-        function updateValue() {
-            socket.on("exchange-data", function(data){
-            switch(data.index){
-                case 1:
-                $("#Temper").html(data.value)
-                alarm(data.value, 18, 19, 21, 22)
-                case 2:
-                $("#Press").html(data.value)
-                case 3:
-                $("#NO").html(data.value)
-                case 4:
-                $("#NO2").html(data.value)
-            }
-            
+        var socket = io()  
+        
+        let  clientid, infor
+        let alarmList = []
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 0)
         })
-        }
-        updateValue();
+        socket.on('vps-send-inforlist',(infor)=>{
+            infor = infor.infor 
+        })
 
-        let pre_Value = 0;
-        function alarm(value, LL, L, H, HH) {
-            if(value-pre_Value>HH){
-                alert("HH")
-            }else if (value-pre_Value>H)
-                alert("H")
-            pre_Value = value;
+        socket.on('vps-send-data', (data)=>{
+                for (i=0; i<alarmList.length; i++){
+                  if(alarmList[i].severity != alarmList[i].pre_severity && (alarmList[i].pre_severity==1 || alarmList[i].pre_severity==2)){
+                    socket.emit('alarmLog', 0, alarmList[i])
+                  }
+                }
+                alarmList = []
+                for (i=0; i<11; i++){
+                    if(!data.data[i].ACK && (data.data[i].severity==1 || data.data[i].severity==2))
+                      alarmList.push(data.data[i])
+                      $("#"+ i).html(data.data[i].content)
+
+                }
+                document.getElementById("listview").innerHTML = ""
+                document.getElementById("listview").appendChild(createListView(alarmList));
+              
+}
+        )
+        function createListView(spacecrafts){
+          var listView=document.createElement('ol');
+          for(var i=0;i<spacecrafts.length;i++)
+          {
+              var listViewItem=document.createElement('li');
+              listViewItem.appendChild(document.createTextNode(spacecrafts[i].content));
+              listView.appendChild(listViewItem);
+          }
+          return listView;
         }
+
         $(document).ready(function(){
         });
-</script>
 
-<div id="Temper" style="display: none;"></div>
+       
+
+</script>
+<style>
+  h1{font-size: xx-large;}
+</style>
+<h1 style="text-align: center">Notifications</h1>
+{{!-- 
+<input id="btnReload" type="button" value="Reload"> --}}
 <div id="Press" style="display: none;"></div>
 <div id="NO" style="display: none;"></div>
 <div id="NO2" style="display: none;"></div>
 
-<div class="alert alert-success" role="alert" >
-  A simple success alert—check it out!
-</div>
-<div class="alert alert-danger" role="alert">
-  A simple danger alert—check it out!
-</div>
-<div class="alert alert-warning" role="alert">
-  A simple warning alert—check it out!
+<div class="list-group" id="listview">
+  <a href="#" class="list-group-item list-group-item-action active">
+    Cras justo odio
+  </a>
+  <a href="#" class="list-group-item list-group-item-action" ></a>
+  <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
+  <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
+  <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>
 </div>
