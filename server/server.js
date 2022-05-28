@@ -303,8 +303,11 @@ app.use(session({
   cookie: {}
 }))
 
-app.use('/home', require("./routes/home"))
-app.use('/login', routeLogin)
+app.use(async(req, res, next)=>{
+  var types = [{id: 0, name: "Khi thai"},{id: 1, name: "Khong khi"},{id: 2, name: "Nuoc thai"},{id: 3, name: "Nuoc mat"},]
+  res.locals.lcTypes = types
+  next();
+})
 
 app.use(async(req, res, next)=>{
   if(req.session.isAuthenticated === null){
@@ -314,6 +317,10 @@ app.use(async(req, res, next)=>{
   res.locals.lcUser = req.session.userAuth;
   next();
 })
+app.use('/', routeLogin)
+app.use('/home', require("./routes/home"))
+app.use('/account', routeLogin)
+
 
 app.get('/trend', (req, res) =>{
     res.render('trend');
@@ -321,9 +328,16 @@ app.get('/trend', (req, res) =>{
 app.get('/tram1', (req, res) =>{
   res.render('tram1');
 })
-app.get('/notifications', (req, res)=>{
-  res.render('notifications')
+app.get('/tram2', (req, res) =>{
+  res.render('tram1');
 })
+app.get('/tram3', (req, res) =>{
+  res.render('tram1');
+})
+app.get('/write', (req, res) =>{
+  res.render('write');
+})
+app.use('/alarm', require('./routes/alarm'))
 
 //const nodesRouter = require('./routes/nodes');
 //app.use('/nodes', nodesRouter)
