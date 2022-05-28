@@ -62,6 +62,7 @@ class Data {
       this.DEAD_BAND = DEAD_BAND;
       this.pre_severity = 0;
       this.pre_duration = 0;
+      this.pre_content = "";
   }
 
   get  calculateAlarm() {
@@ -94,6 +95,7 @@ class Data {
   }
 
     calculateStartTime() {
+      this.pre_content = this.content;
       this.pre_severity = this.severity;
       this.calculateSeverity();
       if(this.severity != this.pre_severity) {
@@ -104,6 +106,15 @@ class Data {
 	  this.ACKTime = 0
       }
   }
+
+	
+get  catchNonAckAlarm() {
+	if(this.pre_severity != this.severity && (this.pre_severity == 1 || this.pre_severity == 2)) {
+		return true
+	} else
+	    return false
+    }
+
 
     calculateDuration() {
       if(this.severity == 1 || this.severity == 2) {
@@ -256,13 +267,12 @@ const exphbs = require('express-handlebars')
 const hbs_sections = require("express-handlebars-sections")
 const bodyParser = require("body-parser")
 const session = require("express-session")
-
+const Alarm = require("./models/alarm")
 const app = express();
 const http = require('http')
 const server = http.createServer(app)
 const {Server} = require('socket.io')
 const io = new Server(server)
-const Alarm = require("./models/alarm")
 
 
 const routeLogin = require('./routes/login')
@@ -293,8 +303,8 @@ app.use(session({
   cookie: {}
 }))
 
-
-app.use(routeLogin)
+app.use('/home', require("./routes/home"))
+app.use('/login', routeLogin)
 
 app.use(async(req, res, next)=>{
   if(req.session.isAuthenticated === null){
@@ -305,36 +315,18 @@ app.use(async(req, res, next)=>{
   next();
 })
 
-app.use(async(req, res, next)=>{
-  const locations = InforList
-  res.locals.lcLocations = locations
-  next(); 
-})
-
-app.use('/home', require("./routes/home"))
-app.use('/account', routeLogin)
-
 app.get('/trend', (req, res) =>{
     res.render('trend');
 })
 app.get('/tram1', (req, res) =>{
   res.render('tram1');
 })
-app.get('/tram2', (req, res) =>{
-  res.render('tram2');
-})
-app.get('/tram3', (req, res) =>{
-  res.render('tram3');
-})
-app.get('/write', (req, res)=>{
-  res.render('write')
+app.get('/notifications', (req, res)=>{
+  res.render('notifications')
 })
 
-
-app.use('/alarm', require("./routes/alarm"))
-
-const nodesRouter = require('./routes/nodes');
-app.use('/nodes', nodesRouter)
+//const nodesRouter = require('./routes/nodes');
+//app.use('/nodes', nodesRouter)
 
 server.listen(3000, () => console.log(`Server strated`))
 
@@ -342,22 +334,23 @@ server.listen(3000, () => console.log(`Server strated`))
 var InforList = []
 var DataList = []
 
-InforList[0] = new Infor(0, "opc.tcp://20.205.122.62:3000/", 0, "Tram 1", "KCN Long Thanh")
-InforList[1] = new Infor(1, "opc.tcp://20.205.122.62:3001/", 1, "Tram 2", "KCN Bien Hoa")
+InforList[0] = new Infor(0, "opc.tcp://VPS:4840/", 0, "Tram 1", "KCN Long Thanh")
+InforList[1] = new Infor(1, "opc.tcp://VPS:4841/", 1, "Tram 2", "KCN Bien Hoa")
 InforList[2] = new Infor(2, "opc.tcp://VPS:4842/", 2, "Tram 5", "KCN VSIP")
 InforList[3] = new Infor(3, "opc.tcp://VPS:4843/", 3, "Tram 1", "Song Dong Nai")
-InforList[4] = new Infor(4, "opc.tcp://VPS:4843/", 3, "Tram 3", "Ho Dau Tieng")
-InforList[5] = new Infor(5, "opc.tcp://VPS:4841/", 1, "Tram 2", "KCN Duc Hoa")
-InforList[6] = new Infor(6, "opc.tcp://VPS:4840/", 0, "Tram 1", "KCN Binh Duong")
-InforList[7] = new Infor(7, "opc.tcp://VPS:4842/", 2, "Tram 7", "KCNC Thu Duc")
-InforList[8] = new Infor(8, "opc.tcp://VPS:4840/", 0, "Tram 3", "KCN Long Thanh")
-InforList[9] = new Infor(9, "opc.tcp://VPS:4841/", 1, "Tram 4", "KCN Bien Hoa")
-InforList[10] = new Infor(10, "opc.tcp://VPS:4842/", 2, "Tram 2", "KCN VSIP")
-InforList[11] = new Infor(11, "opc.tcp://VPS:4843/", 3, "Tram 4", "Song Dong Nai")
-InforList[12] = new Infor(12, "opc.tcp://VPS:4843/", 3, "Tram 1", "Ho Dau Tieng")
-InforList[13] = new Infor(13, "opc.tcp://VPS:4841/", 1, "Tram 7", "KCN Duc Hoa")
-InforList[14] = new Infor(14, "opc.tcp://VPS:4840/", 0, "Tram 4", "KCN Binh Duong")
-InforList[15] = new Infor(15, "opc.tcp://VPS:4842/", 2, "Tram 3", "KCN VSIP")
+InforList[4] = new Infor(4, "opc.tcp://10.66.66.5:4840/", 4, "Tram 1", "Bach Khoa CS1")
+InforList[5] = new Infor(5, "opc.tcp://VPS:4843/", 3, "Tram 3", "Ho Dau Tieng")
+InforList[6] = new Infor(6, "opc.tcp://VPS:4841/", 1, "Tram 2", "KCN Duc Hoa")
+InforList[7] = new Infor(7, "opc.tcp://VPS:4840/", 0, "Tram 1", "KCN Binh Duong")
+InforList[8] = new Infor(8, "opc.tcp://VPS:4842/", 2, "Tram 7", "KCNC Thu Duc")
+InforList[9] = new Infor(9, "opc.tcp://VPS:4840/", 0, "Tram 3", "KCN Long Thanh")
+InforList[10] = new Infor(10, "opc.tcp://VPS:4841/", 1, "Tram 4", "KCN Bien Hoa")
+InforList[11] = new Infor(11, "opc.tcp://VPS:4842/", 2, "Tram 2", "KCN VSIP")
+InforList[12] = new Infor(12, "opc.tcp://VPS:4843/", 3, "Tram 4", "Song Dong Nai")
+InforList[13] = new Infor(13, "opc.tcp://VPS:4843/", 3, "Tram 1", "Ho Dau Tieng")
+InforList[14] = new Infor(14, "opc.tcp://VPS:4841/", 1, "Tram 7", "KCN Duc Hoa")
+InforList[15] = new Infor(15, "opc.tcp://VPS:4840/", 0, "Tram 4", "KCN Binh Duong")
+InforList[16] = new Infor(16, "opc.tcp://VPS:4842/", 2, "Tram 3", "KCN VSIP")
 
 
 for(i=0; i<InforList.length; i++) {
@@ -366,51 +359,54 @@ for(i=0; i<InforList.length; i++) {
     if(InforList[i].OS_Type == 0) { //Khi thai
       _Data[0] = new Data("Temperature", 0, "°C", 60, 70, 90, 100, 3)
       _Data[1] = new Data("Pressure", 0, "mbar", 800, 900, 1100, 1200, 20)
-      _Data[2] = new Data("NO", 0, "mg/m3", 100, 110, 130, 140, 3)
-      _Data[3] = new Data("NO2", 0, "mg/m3", 70, 80, 100, 110, 3)
+      _Data[2] = new Data("NO", 0, "mg/m3", 20, 25, 45, 50, 3)
+      _Data[3] = new Data("NO2", 0, "mg/m3", 25, 30, 50, 55, 3)
       _Data[4] = new Data("CO", 0, "mg/m3", 590, 610, 670, 690, 20)
       _Data[5] = new Data("SO2", 0, "mg/m3", 150, 165, 195, 210, 5)
       _Data[6] = new Data("O2", 0, "%V", 55, 60, 85, 95, 3)
       _Data[7] = new Data("H2S", 0, "mg/m3", 70, 80, 100, 110, 3)
-      _Data[8] = new Data("NH3", 0, "mg/m3", 680, 700, 760, 790, 20)
-      _Data[9] = new Data("Hg", 0, "mg/m3", 160, 180, 220,240, 5)
+      _Data[8] = new Data("NH3", 0, "mg/m3", 5, 10, 20, 25, 2)
+      _Data[9] = new Data("Hg", 0, "mg/m3", 10, 15, 25,30, 2)
       _Data[10] = new Data("PM", 0, "mg/m3", 130, 140, 160, 170, 3)
 
     }else if(InforList[i].OS_Type == 1) { //Nuoc thai
-      _Data[0] = new Data("Flow In", 0, "m3/h", 60, 70, 90, 100, 3)
+      _Data[0] = new Data("Flow In", 0, "m3/h", 800, 900, 1100, 1200, 20)
       _Data[1] = new Data("Flow Out", 0, "m3/h", 800, 900, 1100, 1200, 20)
-      _Data[2] = new Data("Temperature", 0, "°C", 100, 110, 130, 140, 3)
-      _Data[3] = new Data("Color", 0, "Pt-Co", 70, 80, 100, 110, 3)
-      _Data[4] = new Data("pH", 0, "", 590, 610, 670, 690, 20)
-      _Data[5] = new Data("TSS", 0, "mg/L", 150, 165, 195, 210, 5)
-      _Data[6] = new Data("COD", 0, "mg/L", 55, 60, 85, 95, 3)
+      _Data[2] = new Data("Temperature", 0, "°C", 20, 25, 35, 40, 3)
+      _Data[3] = new Data("Color", 0, "Pt-Co", 5, 7, 13, 15, 1)
+      _Data[4] = new Data("pH", 0, "", 5, 6, 8, 9, 0.5)
+      _Data[5] = new Data("TSS", 0, "mg/L", 160, 170, 190, 200, 3)
+      _Data[6] = new Data("COD", 0, "mg/L", 55, 65, 85, 95, 3)
       _Data[7] = new Data("NH4+", 0, "mg/L", 70, 80, 100, 110, 3)
-      _Data[8] = new Data("Photpho+", 0, "mg/L", 680, 700, 760, 790, 20)
-      _Data[9] = new Data("Nito", 0, "mg/L", 160, 180, 220,240, 5)
+      _Data[8] = new Data("Photpho+", 0, "mg/L", 5, 10, 20, 25, 2)
+      _Data[9] = new Data("Nito", 0, "mg/L", 15, 20, 30,35, 2)
       _Data[10]  = new Data("TOC", 0, "mg/L", 130, 140, 160, 170, 3)
-      _Data[11]  = new Data("Clo", 0, "mg/L", 130, 140, 160, 170, 3)
+      _Data[11]  = new Data("Clo", 0, "mg/L", 270, 280, 300, 310, 10)
     
     }else if(InforList[i].OS_Type == 2) { //Khong khi
-      _Data[0] = new Data("Temperature", 0, "°C", 60, 70, 90, 100, 3)
+      _Data[0] = new Data("Temperature", 0, "°C", 10, 15, 25, 30, 3)
       _Data[1] = new Data("NO2", 0, "ppb", 800, 900, 1100, 1200, 20)
-      _Data[2] = new Data("CO", 0, "ppb", 100, 110, 130, 140, 3)
-      _Data[3] = new Data("SO2", 0, "ppb", 70, 80, 100, 110, 3)
+      _Data[2] = new Data("CO", 0, "ppb", 25, 30, 40, 45, 3)
+      _Data[3] = new Data("SO2", 0, "ppb", 30, 35, 45, 50, 3)
       _Data[4] = new Data("O3", 0, "ppb", 590, 610, 670, 690, 20)
       _Data[5] = new Data("PM10", 0, "ug/Nm3", 150, 165, 195, 210, 5)
       _Data[6] = new Data("PM2.5", 0, "ug/Nm3", 55, 60, 85, 95, 3)
     
     }else if(InforList[i].OS_Type == 3) { //Nuoc mat
-      _Data[0] = new Data("Temperature", 0, "°C", 60, 70, 90, 100, 3)
-      _Data[1] = new Data("pH", 0, "", 800, 900, 1100, 1200, 20)
-      _Data[2] = new Data("TSS", 0, "mg/L", 100, 110, 130, 140, 3)
-      _Data[3] = new Data("COD", 0, "mg/L", 70, 80, 100, 110, 3)
+      _Data[0] = new Data("Temperature", 0, "°C", 10, 15, 25, 30, 3)
+      _Data[1] = new Data("pH", 0, "", 5,6, 8, 9, 0.5)
+      _Data[2] = new Data("TSS", 0, "mg/L", 25, 30, 40, 45, 3)
+      _Data[3] = new Data("COD", 0, "mg/L", 30, 35, 45, 50, 3)
       _Data[4] = new Data("DO", 0, "mg/L", 590, 610, 670, 690, 20)
       _Data[5] = new Data("NO3-", 0, "mg/L", 150, 165, 195, 210, 5)
       _Data[6] = new Data("PO4+", 0, "mg/L", 55, 60, 85, 95, 3)
       _Data[7] = new Data("NH4+", 0, "mg/L", 70, 80, 100, 110, 3)
-      _Data[8] = new Data("Total P", 0, "mg/L", 680, 700, 760, 790, 20)
-      _Data[9] = new Data("Total N", 0, "mg/L", 160, 180, 220,240, 5)
+      _Data[8] = new Data("Total P", 0, "mg/L", 8, 10, 20, 22, 1)
+      _Data[9] = new Data("Total N", 0, "mg/L", 15, 20, 30,35, 2)
       _Data[10] = new Data("TOC", 0, "mg/L", 130, 140, 160, 170, 3)
+    }else if(InforList[i].OS_Type == 4) { //Bach khoa
+      _Data[0] = new Data("Button ON", 0, "", 0, 0, 0, 0, 3)
+      _Data[1] = new Data("Button OFF", 0, "", 0, 0, 0, 0, 3)
     }
 
     DataList[i] = _Data
@@ -429,11 +425,11 @@ const connectionStrategy = {
 
 var client = [];
 
-for(i=0; i<4; i++) {
+for(i=0; i<5; i++) {
 	client[i] = OPCUAClient.create();
 }
 
-async function broadcastData(OS_index, URL, numIndicator) {
+async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
 	var nodeIdList = []
 
 	async.series([
@@ -513,8 +509,6 @@ async function broadcastData(OS_index, URL, numIndicator) {
 
        },*/
 
-    
-
 	// step 5: install a subscription and install a monitored item for 10 seconds
         function(callback) {
            const subscriptionOptions = {
@@ -586,10 +580,43 @@ async function broadcastData(OS_index, URL, numIndicator) {
              TimestampsToReturn.Both,
              (err, monitoredItems) => {
                	monitoredItems.on("changed", function(err, dataValue, index) {
+			if(OS_Type == 4) {
+				var i = dataValue.value.value ? 1 : 0
+				console.log(i)
+				DataList[OS_index][index].value = i
+			} else {
+        			DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
+        			DataList[OS_index][index].calculateAlarm
+				if(DataList[OS_index][index].catchNonAckAlarm){
+              console.log(DataList[OS_index][index].pre_severity + "  "+ DataList[OS_index][index].severity)
+              const newAlarm = new Alarm({
+                OS_ID: InforList[OS_index].id,
+		OS_Type: InforList[OS_index].OS_Type,
+                OS_Location: InforList[OS_index].OS_Location,
+                OS_Number: InforList[OS_index].OS_Number,
+                indicator: DataList[OS_index][index].indicator, 
+                value: DataList[OS_index][index].value,
+                unit: DataList[OS_index][index].unit,
+                severity: DataList[OS_index][index].pre_severity,
+                content: DataList[OS_index][index].pre_content,
+                LOWLOW: DataList[OS_index][index].LOWLOW,
+                HIGHHIGH: DataList[OS_index][index].HIGHHIGH,
+                LOW: DataList[OS_index][index].LOW,
+                HIGH: DataList[OS_index][index].HIGH,
+                DEADBAND: DataList[OS_index][index].DEAD_BAND,
+                startTime: DataList[OS_index][index].startTime,
+                duration: DataList[OS_index][index].pre_duration,
+                ACK: DataList[OS_index][index].ACK,
+                ACKUser: DataList[OS_index][index].ackUser,
+                ACKTime: DataList[OS_index][index].ACKTime
+              })
+              //console.time('start')
+              update(newAlarm)
+              //console.timeEnd('start')
 
-        		DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
-        		DataList[OS_index][index].calculateAlarm
-
+            	
+				}
+			}
 		});
 
                 callback();
@@ -598,55 +625,12 @@ async function broadcastData(OS_index, URL, numIndicator) {
            console.log("-------------------------------------");
         },
 
-        //Write a variable
-        // function(callback){
-        //   var nodesToWrite = {
-        //     nodeId: resolveNodeId("ns=2;i=11114"),
-        //     attributeId: AttributeIds.Value,
-        //     value: { 
-        //       value: { 
-        //           dataType: DataType.Float,
-        //           value: 34.345
-        //       }
-        //     }
-        //   };
-        //   the_session.write(nodesToWrite, function(err,data) {
-        //     if (err) {
-        //         console.log("Fail to write" );
-        //         console.log(data);
-        //         return callback(err)
-        //     }
-        //     else {
-        //       console.log(data);
-        //       return data;
-        //     }
-        //   });
-        //   let val = the_session.read({nodeId: resolveNodeId("ns=2;i=11114")})  
-        //   console.log(val.value);
-
-        // },
-
-  
 	])
 }
 
-for(i=0; i<4; i++) {
-  broadcastData(i, InforList[i].endpoint, DataList[i].length);
-  setInterval(alarmUpdate, 2000)
+for(i=0; i<5; i++) {
+  broadcastData(i, InforList[i].OS_Type, InforList[i].endpoint, DataList[i].length);
 }
-
-async function alarmUpdate(){
-  await Alarm.remove({})
-  for (a=0; a<4; a++){
-    for (i=0; i<DataList[a].length; i++){
-      if (!DataList[a][i].ACK && (DataList[a][i].severity == 1 || DataList[a][i].severity==2)){
-          const newAlarm = new Alarm({OS_ID: InforList[a].id, indicator: DataList[a][i].indicator, content: DataList[a][i].content})
-        await newAlarm.save()
-    }
-  }
-}
-}
-
 
 
 io.on('connection', (socket) => {
@@ -655,8 +639,59 @@ io.on('connection', (socket) => {
 	io.to(`${socket.id}`).emit('vps-send-clientID', {
                 clientID: socket.id.toString()
         })
+
 	io.to(`${socket.id}`).emit('vps-send-inforlist', {
 		infor: InforList
+	})
+
+	socket.on('client-send-runLED1', (rn) => {
+                //console.log(dt)
+                run = rn
+                var nodesToWrite = {
+                                nodeId: resolveNodeId("ns=2;i=11116"),
+                                attributeId: AttributeIds.Value,
+                                value: {
+                                        value: {
+                                                dataType: DataType.Boolean,
+                                                value: run
+                                        }
+                                }
+                        };
+                        the_session[2].write(nodesToWrite, function(err,data) {
+                                if (err) {
+                                        console.log("Fail to write" );
+                                        console.log(data);
+                                        return callback(err)
+                                }else {
+                                        console.log(data);
+                                        return data;
+                                }
+                        });
+        })
+
+	socket.on('client-send-duty', (dt) => {
+		//console.log(dt)
+		duty = dt
+		var nodesToWrite = {
+                                nodeId: resolveNodeId("ns=2;i=11115"),
+                                attributeId: AttributeIds.Value,
+                                value: {
+                                        value: {
+                                                dataType: DataType.UInt16,
+                                                value: duty
+                                        }
+                                }
+                        };
+                        the_session[2].write(nodesToWrite, function(err,data) {
+                                if (err) {
+                                        console.log("Fail to write" );
+                                        console.log(data);
+                                        return callback(err)
+                                }else {
+                                        console.log(data);
+                                        return data;
+                                }
+                        });
 	})
 
 	socket.on('alarmLog', (OS_index, data) => {
@@ -665,16 +700,41 @@ io.on('connection', (socket) => {
 		DataList[InforList[OS_index].OS_Type][data.id].ACK = data.ACK
 		DataList[InforList[OS_index].OS_Type][data.id].ackUser = data.ackUser
 		DataList[InforList[OS_index].OS_Type][data.id].ACKTime = data.ACKTime
-    
-	})
+		
+		const newAlarm = new Alarm({
+      OS_Type: InforList[OS_index].OS_Type,
+      OS_Location: InforList[OS_index].OS_Location,
+      OS_Number: InforList[OS_index].OS_Number,
+      indicator: data.indicator, 
+      value: data.value,
+      unit: data.unit,
+      severity: data.pre_severity,
+      content: data.pre_content,
+      LOWLOW: data.LOWLOW,
+      HIGHHIGH: data.HIGHHIGH,
+      LOW: data.LOW,
+      HIGH: data.HIGH,
+      DEADBAND: data.DEAD_BAND,
+      startTime: data.startTime,
+      duration: data.pre_duration,
+      ACK: data.ACK,
+      ACKUser: data.ackUser,
+      ACKTime: data.ACKTime
+    })
+    update(newAlarm)
+			})
 
 	socket.on('client-send-OS_index', (clientID, OS_index_client) => {
 
-
 		setInterval(function(){
 			io.to(`${clientID}`).emit('vps-send-data', {
-        data: DataList[OS_index_client]
+                                data: DataList[OS_index_client]
+				
 			})
 		}, 500);
+		
 	})
 })
+async function update (alarm){
+  await alarm.save()
+}
