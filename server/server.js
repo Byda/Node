@@ -337,7 +337,10 @@ app.get('/tram3', (req, res) =>{
 app.get('/write', (req, res) =>{
   res.render('write');
 })
+
+app.use('/report', require('./routes/report'))
 app.use('/alarm', require('./routes/alarm'))
+
 
 //const nodesRouter = require('./routes/nodes');
 //app.use('/nodes', nodesRouter)

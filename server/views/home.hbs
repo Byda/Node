@@ -6,16 +6,19 @@
         socket.on('vps-send-clientID',(id)=>{
             clientid = id.clientID 
             socket.emit('client-send-OS_index', clientid, 0)
-            console.log(clientid)
         })
 
         socket.on('vps-send-data', (data)=>{
             if (data.data[0].value){
             $("h2").html("Connected")
+            $("h4").html("Connected")
+            $("h6").html("Connected")
             }
             for(i=0;i<11;i++){
-            if (data.data[0].severity)
+            if (data.data[i].severity)
+                $("h1").html("Warning!!!")
                 $("h3").html("Warning!!!")
+                $("h5").html("Warning!!!")
             }
         })
 
@@ -24,10 +27,10 @@
 
 </script>
 <style>
-    h2{font-size: small; color: green; text-align: center;}
-    h3{font-size: small;color: rgb(255, 174, 0);text-align: center;}
+    h2,h4,h6{font-size: small; color: green; text-align: center;}
+    h1,h3,h5{font-size: small;color: rgb(255, 174, 0);text-align: center;}
 </style>
-
+<span id="stt1"></span>
 <div id="googleMap" style="width: 100%;;height: 750px;;"></div>
 <script>
     
@@ -53,15 +56,15 @@
             map: map,
         })
         const infoWindow = new google.maps.InfoWindow({
-            content: "<b>Bach Khoa Station:</b> <br> Status: <h2></h2> Warning: <h3></h3>",
+            content: "<b>Bach Khoa Station:</b> <br> Status: <h2></h2> Warning: <h1></h1>",
             disableAutoPan: true,
         });
         const infoWindow2 = new google.maps.InfoWindow({
-            content: "Bien Hoa Station: <br> Pressure: <h4></h4> <br>  Temperature: <h5></h5>",
+            content: "<b>Bien Hoa Station:</b> <br> Status: <h4></h4> Warning: <h3></h3>",
             disableAutoPan: true,
         });
         const infoWindow3 = new google.maps.InfoWindow({
-            content: "My Tho Station: <br> Pressure: <h4></h4> <br>  Temperature: <h5></h5>",
+            content: "<b>My Tho Station:</b> <br> Status: <h6></h6> Warning: <h5></h5>",
             disableAutoPan: true,
         });
 

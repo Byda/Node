@@ -1,22 +1,15 @@
 <script>
 
-        function Func(val){
-            alert(val)
-            var ackuser = document.getElementById("user").innerHTML 
-            $.get('alarm/ack/'+val+'/'+ackuser, ()=>console.log(val))
-
-        }
-        function send(val){
-            var type = parseInt(val)
-            $.get('/report/'+type, (data)=>console.log(data))
-        }
+        
             $(document).ready(function(){
-                   
+                 
             })
+
 </script>
 <div class="row">
     <div class="col-sm-2">
         <div class="card">
+            
             <h5 class="card-header">OutStion Types</h5>
             <div class="list-group">
                 {{#each lcTypes}}
@@ -40,10 +33,10 @@
         </a>
 
         <div class="dropdown-menu" aria-labelledby="OS_Type">
-            <a class="dropdown-item" id="0" href="#" onclick="send(this.id)">Khi thai</a>
-            <a class="dropdown-item" id="1" href="#" onclick="send(this.id)">Khong khi</a>
-            <a class="dropdown-item" id="2" href="#" onclick="send(this.id)">Nuoc mat</a>
-            <a class="dropdown-item" id="3" href="#" onclick="send(this.id)">Nuoc ngam</a>
+            <a class="dropdown-item" id="0" href="/report/0">Khi thai</a>
+            <a class="dropdown-item" id="1" href="/report/1">Khong khi</a>
+            <a class="dropdown-item" id="2" href="/report/2">Nuoc mat</a>
+            <a class="dropdown-item" id="3" href="/report/3">Nuoc ngam</a>
         </div>
         </div>
         </div>
@@ -70,7 +63,7 @@
                         </div>
                         <div id="id" style="display: none;">{{_id}}</div>
                         <div class="card-footer">
-                            <a name="btn" id="{{_id}}" class="btn btn-outline-success" href="#" role="button"  onclick="Func(this.id)">
+                            <a name="btn" id="{{_id}}" class="btn btn-outline-success" href="#" role="button" >
                                 <i class="fa fa-eye-slash" aria-hidden="true"></i>
                                 ACK
                                 </a>

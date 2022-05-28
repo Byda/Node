@@ -2,6 +2,10 @@ const express = require("express")
 const { constructEventFilter } = require("node-opcua")
 const alarmModel = require("../models/alarm")
 const ackuserModel = require("../models/ack")
+const excel = require("excel4node")
+var alarm = require("../models/alarm")
+var path = require("path")
+
 
 
 const alarmRouter = express.Router()
@@ -20,14 +24,5 @@ alarmRouter.get("/:OS_id", async (req, res)=>{
     })
 })
 
-// alarmRouter.get("ack/:val/:ackuser", async (req, res)=>{
-//     console.log("newACKUseradsfhjsaksdkjhfsdjkhfskdjhfksdjfh2384234a")
-//     var alarmID = req.params.val
-//     var ackuser = req.params.ackuser.toString()
-//     var info = await alarmModel.findOne({_id: alarmID})
-//     const newACKUser = new ackuserModel({OS_ID: info.OS_ID, indicator: info.indicator, content: info.content, ACK: ackuser})
-//     await newACKUser.save()
-//     res.json("ACK success")
-// })
 
 module.exports = alarmRouter
