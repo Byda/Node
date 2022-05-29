@@ -351,9 +351,10 @@ app.get('/trend', (req, res) =>{
 // app.get('/tram3', (req, res) =>{
 //   res.render('tram3');
 // })
-// app.get('/write', (req, res) =>{
-//   res.render('write');
-// })
+
+app.get('/write', (req, res) =>{
+  res.render('write');
+})
 app.use('/_trend', require("./routes/_trend"))
 
 app.use('/report', require('./routes/report'))
@@ -442,7 +443,11 @@ for(i=0; i<InforList.length; i++) {
     }else if(InforList[i].OS_Type == 4) { //Bach khoa
       _Data[0] = new Data("Button ON", 0, "", 0, 0, 0, 0, 3)
       _Data[1] = new Data("Button OFF", 0, "", 0, 0, 0, 0, 3)
+<<<<<<< HEAD
       _Data[2] = new Data("Delay_Gateway_VPS", 0, "ms", 0, 0, 0, 0, 3)
+=======
+      _Data[2] = new Data("Delay", 0, "ms", 0, 0, 0, 0, 3)
+>>>>>>> 3562c79587fab5d1dece1eba27fce30c1f28d761
     }
 
     DataList[i] = _Data
@@ -618,6 +623,7 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
                	monitoredItems.on("changed", function(err, dataValue, index) {
 			if(OS_Type == 4) {
 				if(index == 0 || index == 1) {
+<<<<<<< HEAD
 					var i = dataValue.value.value ? 1 : 0
 					//console.log(i)
 					DataList[OS_index][index].value = i
@@ -626,6 +632,15 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
 				}
 				console.log(Date.now())
 			} else {
+=======
+          var i = dataValue.value.value ? 1 : 0
+          DataList[OS_index][index].value = i
+          } else {
+            io.emit("vps-send-delay", {
+              startTime_VPS: Date.now() % 10000 - dataValue.value.value
+            })
+          }} else {
+>>>>>>> 3562c79587fab5d1dece1eba27fce30c1f28d761
         			DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
         			DataList[OS_index][index].calculateAlarm
 				if(DataList[OS_index][index].catchNonAckAlarm){
@@ -689,7 +704,7 @@ io.on('connection', (socket) => {
                 //console.log(dt)
                 run = rn
                 var nodesToWrite = {
-                                nodeId: resolveNodeId("ns=2;i=11116"),
+                                nodeId: resolveNodeId("ns=2;i=11104"),
                                 attributeId: AttributeIds.Value,
                                 value: {
                                         value: {
@@ -698,7 +713,7 @@ io.on('connection', (socket) => {
                                         }
                                 }
                         };
-                        the_session[2].write(nodesToWrite, function(err,data) {
+                        the_session[4].write(nodesToWrite, function(err,data) {
                                 if (err) {
                                         console.log("Fail to write" );
                                         console.log(data);
@@ -714,7 +729,7 @@ io.on('connection', (socket) => {
 		//console.log(dt)
 		duty = dt
 		var nodesToWrite = {
-                                nodeId: resolveNodeId("ns=2;i=11115"),
+                                nodeId: resolveNodeId("ns=2;i=11105"),
                                 attributeId: AttributeIds.Value,
                                 value: {
                                         value: {
@@ -723,7 +738,7 @@ io.on('connection', (socket) => {
                                         }
                                 }
                         };
-                        the_session[2].write(nodesToWrite, function(err,data) {
+                        the_session[4].write(nodesToWrite, function(err,data) {
                                 if (err) {
                                         console.log("Fail to write" );
                                         console.log(data);
@@ -736,8 +751,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('alarmLog', (OS_index, data) => {
-		console.log(OS_index)
-		console.log(data)
+		// console.log(OS_index)
+		// console.log(data)
 		DataList[InforList[OS_index].OS_Type][data.id].ACK = data.ACK
 		DataList[InforList[OS_index].OS_Type][data.id].ackUser = data.ackUser
 		DataList[InforList[OS_index].OS_Type][data.id].ACKTime = data.ACKTime

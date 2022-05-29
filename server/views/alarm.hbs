@@ -25,7 +25,7 @@
 
         <div class="card">
         <div class="card-body">
-            <span>Report Excel</span>
+            <span>Report alarms in Excel</span>
 
         <div class="dropdown show float-right">
         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -56,10 +56,20 @@
             <div class="row">
                 {{#each this.alarms}}
                 <div class="col-sm-4 mb-3">
-                    <div class="card">
+                    <div class="card h-100">
                         <div class="card-body">
-                            <h6 class="card-title">Location: {{OS_Location}}     Indicator: {{indicator}}</h6>
-                            <p class="card-text text-danger">{{content}}</p>
+                            <h6 class="card-title">Location: {{OS_Location}} <br> Indicator: {{indicator}}</h6>
+                        {{#switch severity}}
+                            {{#case 1}}
+                                <p class="card-text text-warning text-center h5">
+                                <i class="fa-solid fa-circle-exclamation"></i>   {{content}}</p> 
+                            {{/case}}
+                            {{#case 2}}
+                            <p class="card-text text-danger text-center h5">
+                                <i class="fa-solid fa-triangle-exclamation"></i>  {{content}}</p>            
+                            {{/case}}
+                        {{/switch}}
+                 
                         </div>
                         <div id="id" style="display: none;">{{_id}}</div>
                         <div class="card-footer">
@@ -83,7 +93,7 @@
                 <div class="col-sm-4 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Location: {{OS_Location}}     Indicator: {{indicator}}</h6>
+                            <h6 class="card-title">Location: {{OS_Location}}  <br>   Indicator: {{indicator}}</h6>
                             <p class="card-text text-danger">{{content}}</p>
                         </div>
 

@@ -5,6 +5,7 @@ const ackuserModel = require("../models/ack")
 const excel = require("excel4node")
 var alarm = require("../models/alarm")
 var path = require("path")
+const { time } = require("console")
 
 
 
@@ -23,6 +24,9 @@ alarmRouter.get("/:OS_id", async (req, res)=>{
         empty: listAlarm === null
     })
 })
-
+// function pushNewObject(arr){
+//     time = (new Date(this.startTime))
+//     arr.push({time: time.toString()})
+// }
 
 module.exports = alarmRouter
