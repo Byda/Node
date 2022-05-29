@@ -1,0 +1,1726 @@
+<script>  
+            $(document).ready(function(){
+                 
+            })
+</script>
+<div class="row">
+    <div class="col-sm-2">
+        <div class="card">
+            
+            <h5 class="card-header">OutStion Locations</h5>
+            <div class="list-group">
+                {{#each lcStations}}
+                <a href="./{{id}}" class="list-group-item mt-1 list-group-item-action {{#if isActive}}active{{/if}}">
+                    {{OS_Number}} - {{OS_Location}}
+                </a>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10">
+{{#switch this.types}}
+    {{#case 0}}
+    <script src="./socket.io/socket.io.js"></script>
+<script>
+        var socket = io()
+
+        let  clientid, infor
+        
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 0)
+        })
+
+        socket.on('vps-send-data', (data)=>{
+                for (i=0; i<11; i++){
+                    const indicator = [];
+                    indicator[i] = data.data[i].indicator
+                    $("#"+ indicator[i]).html(data.data[i].value)
+                } 
+        })
+        
+        $(document).ready(function(){
+        });
+
+</script>
+    <div id="Temperature" style="display: none;"></div>
+    <div id="Pressure" style="display: none;"></div>
+    <div id="NO" style="display: none;"></div>
+    <div id="NO2" style="display: none;"></div>
+    <div id="CO" style="display: none;"></div>
+    <div id="SO2" style="display: none;"></div>
+    <div id="O2" style="display: none;"></div>
+    <div id="H2S" style="display: none;"></div>
+    <div id="NH3" style="display: none;"></div>
+    <div id="Hg" style="display: none;"></div>
+    <div id="PM" style="display: none;"></div>
+
+<div style="float: right; width: 100%;" >
+    <h3 style="text-align: center; font-size: xx-large;" >{{this.name}}</h3>
+    <div id="div1" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Temperature</div>
+        <canvas id="myChart" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ºC",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Temperature").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div2" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Pressure</div>
+        <canvas id="myChart2" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart2", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mbar",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Pressure").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div3" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NO</div>
+        <canvas id="myChart3" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart3", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NO").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div4" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NO2</div>
+        <canvas id="myChart4" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart4", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NO2").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div5" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">CO</div>
+        <canvas id="myChart5" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart5", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("CO").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div6" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">SO2</div>
+        <canvas id="myChart6" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart6", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("SO2").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div7" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">O2</div>
+        <canvas id="myChart7" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart7", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "%V",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("O2").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div8" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">H2S</div>
+        <canvas id="myChart8" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart8", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("H2S").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div9" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NH3</div>
+        <canvas id="myChart9" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart9", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NH3").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div10" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Hg</div>
+        <canvas id="myChart10" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart10", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Hg").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div11" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">PM</div>
+        <canvas id="myChart11" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart11", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/m3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("PM").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+
+</div>
+    {{/case}}
+    {{#case 1}}
+    <script src="./socket.io/socket.io.js"></script>
+<script>
+             var socket = io()
+
+        let  clientid, infor
+        
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 1)
+            console.log(clientid)
+        })
+
+        socket.on('vps-send-data', (data)=>{
+            console.log(data.data[1])
+                for (i=0; i<12; i++){
+                    const indicator = [];
+                    indicator[i] = data.data[i].indicator
+                    $("#"+ indicator[i]).html(data.data[i].value)
+                } 
+        })
+        
+        $(document).ready(function(){
+        });
+
+</script>
+    <div id="Flow In" style="display: none;"></div>
+    <div id="Flow out" style="display: none;"></div>
+    <div id="Temperature" style="display: none;"></div>
+    <div id="Color" style="display: none;"></div>
+    <div id="pH" style="display: none;"></div>
+    <div id="TSS" style="display: none;"></div>
+    <div id="COD" style="display: none;"></div>
+    <div id="NH4+" style="display: none;"></div>
+    <div id="Photpho+" style="display: none;"></div>
+    <div id="Nito" style="display: none;"></div>
+    <div id="TOC" style="display: none;"></div>
+    <div id="Clo" style="display: none;"></div>
+
+<div style="float: right; width: 100%" >
+    <h3 style="text-align: center; font-size: xx-large;" >{{this.name}}</h3>
+    <div id="div1" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">TOC</div>
+        <canvas id="myChart" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("TOC").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div2" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Nito</div>
+        <canvas id="myChart2" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart2", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Nito").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div3" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Temperature</div>
+        <canvas id="myChart3" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart3", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ºC",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Temperature").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+     
+        </script>
+ 
+    </div>
+    <div id="div4" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Color</div>
+        <canvas id="myChart4" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart4", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Color").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div5" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">pH</div>
+        <canvas id="myChart5" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart5", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("pH").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div6" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">TSS</div>
+        <canvas id="myChart6" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart6", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("TSS").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div7" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">COD</div>
+        <canvas id="myChart7" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart7", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("COD").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div8" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NH4+</div>
+        <canvas id="myChart8" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart8", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NH4+").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+
+</div>
+    {{/case}}
+    {{#case 2}}
+    <script src="./socket.io/socket.io.js"></script>
+<script>
+             var socket = io()
+
+        let  clientid, infor
+        
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 2)
+            console.log(clientid)
+        })
+
+        socket.on('vps-send-data', (data)=>{
+            console.log(data.data[2])
+                for (i=0; i<7; i++){
+                    const indicator = [];
+                    indicator[i] = data.data[i].indicator
+                    $("#"+ indicator[i]).html(data.data[i].value)
+                } 
+        })
+        
+        $(document).ready(function(){
+        });
+
+</script>
+    <div id="Temperature" style="display: none;"></div>
+    <div id="NO2" style="display: none;"></div>
+    <div id="CO" style="display: none;"></div>
+    <div id="SO2" style="display: none;"></div>
+    <div id="O3" style="display: none;"></div>
+    <div id="PM10" style="display: none;"></div>
+    <div id="PM2.5" style="display: none;"></div>
+   
+
+<div style="float: right; width: 100%" >
+    <h3 style="text-align: center; font-size: xx-large;" >{{this.name}}</h3>
+    <div id="div1" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Temperature</div>
+        <canvas id="myChart" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ºC",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Temperature").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div2" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NO2</div>
+        <canvas id="myChart2" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart2", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ppb",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NO2").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div3" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">CO</div>
+        <canvas id="myChart3" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart3", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ppb",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("CO").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div4" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">SO2</div>
+        <canvas id="myChart4" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart4", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ppb",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("SO2").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div5" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">O3</div>
+        <canvas id="myChart5" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart5", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ppb",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("O3").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div6" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">PM10</div>
+        <canvas id="myChart6" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart6", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ug/Nm3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("PM10").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div7" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">PM2.5</div>
+        <canvas id="myChart7" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart7", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ug/Nm3",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("PM2.5").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+
+</div>
+    {{/case}}
+
+    {{#case 3}}
+    <script src="./socket.io/socket.io.js"></script>
+<script>
+             var socket = io()
+
+        let  clientid, infor
+        
+        socket.on('vps-send-clientID',(id)=>{
+            clientid = id.clientID 
+            socket.emit('client-send-OS_index', clientid, 3)
+            console.log(clientid)
+        })
+
+        socket.on('vps-send-data', (data)=>{
+            console.log(data.data[3])
+                for (i=0; i<11; i++){
+                    const indicator = [];
+                    indicator[i] = data.data[i].indicator
+                    $("#"+ indicator[i]).html(data.data[i].value)
+                } 
+        })
+        
+        $(document).ready(function(){
+        });
+
+</script>
+    <div id="Temperature" style="display: none;"></div>
+    <div id="pH" style="display: none;"></div>
+    <div id="TSS" style="display: none;"></div>
+    <div id="COD" style="display: none;"></div>
+    <div id="DO" style="display: none;"></div>
+    <div id="NO3-" style="display: none;"></div>
+    <div id="PO4+" style="display: none;"></div>
+    <div id="NH4+" style="display: none;"></div>
+    <div id="Total P" style="display: none;"></div>
+    <div id="Total N" style="display: none;"></div>
+    <div id="TOC" style="display: none;"></div>
+
+
+<div style="float: right; width: 100%" >
+    <h3 style="text-align: center; font-size: xx-large;" >{{this.name}}</h3>
+    <div id="div1" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">Temperature</div>
+        <canvas id="myChart" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "ºC",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("Temperature").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div2" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">pH</div>
+        <canvas id="myChart2" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart2", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("pH").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div3" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">TSS</div>
+        <canvas id="myChart3" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart3", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("TSS").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div4" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">COD</div>
+        <canvas id="myChart4" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart4", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("COD").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div5" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">DO</div>
+        <canvas id="myChart5" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart5", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("DO").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div6" style="float: right; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NO3-</div>
+        <canvas id="myChart6" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart6", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NO3-").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div7" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">PO4+</div>
+        <canvas id="myChart7" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart7", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("PO4+").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+    <div id="div8" style="float: left; width: 50%; height: 50%;">
+        <div style="font-size: x-large; text-align: center;" id="text1">NH4+</div>
+        <canvas id="myChart8" style="width:100%;max-width:700px"></canvas> 
+               <script>
+            new Chart("myChart8", {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "mg/L",
+                    backgroundColor: "rgba(0,0,0,1.0)",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: []
+                }]
+            },
+            options: {
+                legend: {display: false},
+                scales: {
+                    x: {
+                        type: 'realtime',   // x axis will auto-scroll from right to left
+                        realtime: {         // per-axis options
+                        duration: 20000,  // data in the past 20000 ms will be displayed
+                        refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                        delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                        pause: false,     // chart is not paused
+                        ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                        frameRate: 30,    // data points are drawn 30 times every second
+                        
+                        // a callback to update datasets
+                        onRefresh: chart => {
+                            chart.data.datasets.forEach(dataset => {
+                                    dataset.data.push({
+                                    x: Date.now(),
+                                    y: document.getElementById("NH4+").innerHTML
+                                })
+                            });
+                        }
+                        }
+                    },
+                }
+            }
+            });
+    
+        </script>
+ 
+    </div>
+
+</div>
+    {{/case}}
+{{/switch}}
+
+
+    </div>
+</div>

@@ -286,11 +286,26 @@ const ConnectDB = async ()=>{
     }
 }
 
+
 ConnectDB()
 
 app.use(express.json())
 
-app.engine('hbs', exphbs.engine({layoutsDir: './views/_layouts', defaultLayout: 'main.hbs', partialsDir: './views/_partials', extname: '.hbs', helpers: { section: hbs_sections()} }));
+app.engine('hbs', exphbs.engine(
+  {layoutsDir: './views/_layouts', defaultLayout: 'main.hbs', partialsDir: './views/_partials', extname: '.hbs', 
+  helpers: { 
+    section: hbs_sections(),
+    switch: function(value, options) {
+      this.switch_value = value;
+      return options.fn(this);
+    },
+    case: function(value, options) {
+      if (value == this.switch_value) {
+        return options.fn(this);
+      }
+    }
+  } 
+  }));
 app.set('view engine', 'hbs')
 app.use(express.static(__dirname + "/public"))
 app.use(bodyParser.json())
@@ -305,6 +320,8 @@ app.use(session({
 
 app.use(async(req, res, next)=>{
   var types = [{id: 0, name: "Khi thai"},{id: 1, name: "Khong khi"},{id: 2, name: "Nuoc thai"},{id: 3, name: "Nuoc mat"},]
+  var stations = InforList
+  res.locals.lcStations = stations,
   res.locals.lcTypes = types
   next();
 })
@@ -322,21 +339,22 @@ app.use('/home', require("./routes/home"))
 app.use('/account', routeLogin)
 
 
-app.get('/trend', (req, res) =>{
-    res.render('trend');
-})
-app.get('/tram1', (req, res) =>{
-  res.render('tram1');
-})
-app.get('/tram2', (req, res) =>{
-  res.render('tram1');
-})
-app.get('/tram3', (req, res) =>{
-  res.render('tram1');
-})
-app.get('/write', (req, res) =>{
-  res.render('write');
-})
+// app.get('/trend', (req, res) =>{
+//     res.render('trend');
+// })
+// app.get('/tram1', (req, res) =>{
+//   res.render('tram1');
+// })
+// app.get('/tram2', (req, res) =>{
+//   res.render('tram2');
+// })
+// app.get('/tram3', (req, res) =>{
+//   res.render('tram3');
+// })
+// app.get('/write', (req, res) =>{
+//   res.render('write');
+// })
+app.use('/_trend', require("./routes/_trend"))
 
 app.use('/report', require('./routes/report'))
 app.use('/alarm', require('./routes/alarm'))
@@ -751,8 +769,7 @@ io.on('connection', (socket) => {
 
 		setInterval(function(){
 			io.to(`${clientID}`).emit('vps-send-data', {
-                                data: DataList[OS_index_client]
-				
+          data: DataList[OS_index_client]
 			})
 		}, 500);
 		
