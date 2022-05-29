@@ -339,9 +339,9 @@ app.use('/home', require("./routes/home"))
 app.use('/account', routeLogin)
 
 
-// app.get('/trend', (req, res) =>{
-//     res.render('trend');
-// })
+app.get('/trend', (req, res) =>{
+    res.render('trend');
+})
 // app.get('/tram1', (req, res) =>{
 //   res.render('tram1');
 // })
