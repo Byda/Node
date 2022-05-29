@@ -351,9 +351,10 @@ app.get('/trend', (req, res) =>{
 // app.get('/tram3', (req, res) =>{
 //   res.render('tram3');
 // })
-// app.get('/write', (req, res) =>{
-//   res.render('write');
-// })
+
+app.get('/write', (req, res) =>{
+  res.render('write');
+})
 app.use('/_trend', require("./routes/_trend"))
 
 app.use('/report', require('./routes/report'))
@@ -442,6 +443,7 @@ for(i=0; i<InforList.length; i++) {
     }else if(InforList[i].OS_Type == 4) { //Bach khoa
       _Data[0] = new Data("Button ON", 0, "", 0, 0, 0, 0, 3)
       _Data[1] = new Data("Button OFF", 0, "", 0, 0, 0, 0, 3)
+      _Data[2] = new Data("Delay", 0, "ms", 0, 0, 0, 0, 3)
     }
 
     DataList[i] = _Data
@@ -616,10 +618,16 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
              (err, monitoredItems) => {
                	monitoredItems.on("changed", function(err, dataValue, index) {
 			if(OS_Type == 4) {
-				var i = dataValue.value.value ? 1 : 0
-				console.log(i)
-				DataList[OS_index][index].value = i
-			} else {
+				if(index == 0 || index == 1) {
+          var i = dataValue.value.value ? 1 : 0
+          console.log(i)
+          DataList[OS_index][index].value = i
+          } else {
+            DataList[OS_index][index].value = Date.now() % 10000 - dataValue.value.value
+            io.emit("vps-send-delay", {
+              startTime_VPS: Date.now() % 10000
+            })
+          }} else {
         			DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
         			DataList[OS_index][index].calculateAlarm
 				if(DataList[OS_index][index].catchNonAckAlarm){
@@ -730,8 +738,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('alarmLog', (OS_index, data) => {
-		console.log(OS_index)
-		console.log(data)
+		// console.log(OS_index)
+		// console.log(data)
 		DataList[InforList[OS_index].OS_Type][data.id].ACK = data.ACK
 		DataList[InforList[OS_index].OS_Type][data.id].ackUser = data.ackUser
 		DataList[InforList[OS_index].OS_Type][data.id].ACKTime = data.ACKTime

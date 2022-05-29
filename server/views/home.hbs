@@ -15,10 +15,12 @@
             $("h6").html("Connected")
             }
             for(i=0;i<11;i++){
-            if (data.data[i].severity)
+            if (data.data[i].severity){
                 $("h1").html("Warning!!!")
                 $("h3").html("Warning!!!")
                 $("h5").html("Warning!!!")
+            }
+               
             }
         })
 
