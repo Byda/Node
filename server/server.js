@@ -620,12 +620,10 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
 			if(OS_Type == 4) {
 				if(index == 0 || index == 1) {
           var i = dataValue.value.value ? 1 : 0
-          console.log(i)
           DataList[OS_index][index].value = i
           } else {
-            DataList[OS_index][index].value = Date.now() % 10000 - dataValue.value.value
             io.emit("vps-send-delay", {
-              startTime_VPS: Date.now() % 10000
+              startTime_VPS: Date.now() % 10000 - dataValue.value.value
             })
           }} else {
         			DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
@@ -691,7 +689,7 @@ io.on('connection', (socket) => {
                 //console.log(dt)
                 run = rn
                 var nodesToWrite = {
-                                nodeId: resolveNodeId("ns=2;i=11116"),
+                                nodeId: resolveNodeId("ns=2;i=11104"),
                                 attributeId: AttributeIds.Value,
                                 value: {
                                         value: {
@@ -700,7 +698,7 @@ io.on('connection', (socket) => {
                                         }
                                 }
                         };
-                        the_session[2].write(nodesToWrite, function(err,data) {
+                        the_session[4].write(nodesToWrite, function(err,data) {
                                 if (err) {
                                         console.log("Fail to write" );
                                         console.log(data);
@@ -716,7 +714,7 @@ io.on('connection', (socket) => {
 		//console.log(dt)
 		duty = dt
 		var nodesToWrite = {
-                                nodeId: resolveNodeId("ns=2;i=11115"),
+                                nodeId: resolveNodeId("ns=2;i=11105"),
                                 attributeId: AttributeIds.Value,
                                 value: {
                                         value: {
@@ -725,7 +723,7 @@ io.on('connection', (socket) => {
                                         }
                                 }
                         };
-                        the_session[2].write(nodesToWrite, function(err,data) {
+                        the_session[4].write(nodesToWrite, function(err,data) {
                                 if (err) {
                                         console.log("Fail to write" );
                                         console.log(data);
