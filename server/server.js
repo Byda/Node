@@ -275,7 +275,7 @@ const {Server} = require('socket.io')
 const io = new Server(server)
 
 
-const routeLogin = require('./routes/login')
+const w_routeLogin = require('./routes/account')
 
 const ConnectDB = async ()=>{
     try {
@@ -334,10 +334,10 @@ app.use(async(req, res, next)=>{
   res.locals.lcUser = req.session.userAuth;
   next();
 })
-app.use('/', routeLogin)
+app.use('/', w_routeLogin)
 app.use('/home', require("./routes/home"))
-app.use('/account', routeLogin)
-
+app.use('/account', w_routeLogin)
+app.use('/login', require('./routes/login'))
 
 app.get('/trend', (req, res) =>{
     res.render('trend');
@@ -359,7 +359,6 @@ app.use('/_trend', require("./routes/_trend"))
 
 app.use('/report', require('./routes/report'))
 app.use('/alarm', require('./routes/alarm'))
-
 
 //const nodesRouter = require('./routes/nodes');
 //app.use('/nodes', nodesRouter)
@@ -443,11 +442,7 @@ for(i=0; i<InforList.length; i++) {
     }else if(InforList[i].OS_Type == 4) { //Bach khoa
       _Data[0] = new Data("Button ON", 0, "", 0, 0, 0, 0, 3)
       _Data[1] = new Data("Button OFF", 0, "", 0, 0, 0, 0, 3)
-<<<<<<< HEAD
-      _Data[2] = new Data("Delay_Gateway_VPS", 0, "ms", 0, 0, 0, 0, 3)
-=======
       _Data[2] = new Data("Delay", 0, "ms", 0, 0, 0, 0, 3)
->>>>>>> 3562c79587fab5d1dece1eba27fce30c1f28d761
     }
 
     DataList[i] = _Data
@@ -557,7 +552,7 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
              publishingEnabled: true,
              requestedLifetimeCount: 10000,
              requestedMaxKeepAliveCount: 10,
-             requestedPublishingInterval: 500
+             requestedPublishingInterval: 100
            };
 
 
@@ -610,7 +605,7 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
           }
 
            const monitoringParamaters = {
-             samplingInterval: 500,
+             samplingInterval: 100,
              discardOldest: true,
              queueSize: 10
         };
@@ -623,30 +618,19 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
                	monitoredItems.on("changed", function(err, dataValue, index) {
 			if(OS_Type == 4) {
 				if(index == 0 || index == 1) {
-<<<<<<< HEAD
-					var i = dataValue.value.value ? 1 : 0
-					//console.log(i)
-					DataList[OS_index][index].value = i
-				} else {
-					DataList[OS_index][index].value = - dataValue.value.value + Date.now() % 10000
-				}
-				console.log(Date.now())
-			} else {
-=======
-          var i = dataValue.value.value ? 1 : 0
-          DataList[OS_index][index].value = i
-          } else {
-            io.emit("vps-send-delay", {
-              startTime_VPS: Date.now() % 10000 - dataValue.value.value
-            })
-          }} else {
->>>>>>> 3562c79587fab5d1dece1eba27fce30c1f28d761
+         				 var i = dataValue.value.value ? 1 : 0
+          				DataList[OS_index][index].value = i
+         		 	} else {
+            				io.emit("vps-send-delay", {
+              					delay: Date.now() % 10000 - dataValue.value.value
+            			})
+          		}} else {
         			DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
         			DataList[OS_index][index].calculateAlarm
 				if(DataList[OS_index][index].catchNonAckAlarm){
               console.log(DataList[OS_index][index].pre_severity + "  "+ DataList[OS_index][index].severity)
               const newAlarm = new Alarm({
-                OS_ID: InforList[OS_index].id,
+		OS_ID: InforList[OS_index].id,
 		OS_Type: InforList[OS_index].OS_Type,
                 OS_Location: InforList[OS_index].OS_Location,
                 OS_Number: InforList[OS_index].OS_Number,
@@ -758,21 +742,22 @@ io.on('connection', (socket) => {
 		DataList[InforList[OS_index].OS_Type][data.id].ACKTime = data.ACKTime
 		
 		const newAlarm = new Alarm({
+      OS_ID: InforList[OS_index].id,	
       OS_Type: InforList[OS_index].OS_Type,
       OS_Location: InforList[OS_index].OS_Location,
       OS_Number: InforList[OS_index].OS_Number,
       indicator: data.indicator, 
       value: data.value,
       unit: data.unit,
-      severity: data.pre_severity,
-      content: data.pre_content,
+      severity: DataList[InforList[OS_index].OS_Type][data.id].pre_severity,
+      content: DataList[InforList[OS_index].OS_Type][data.id].pre_content,
       LOWLOW: data.LOWLOW,
       HIGHHIGH: data.HIGHHIGH,
       LOW: data.LOW,
       HIGH: data.HIGH,
       DEADBAND: data.DEAD_BAND,
       startTime: data.startTime,
-      duration: data.pre_duration,
+      duration: DataList[InforList[OS_index].OS_Type][data.id].pre_duration,
       ACK: data.ACK,
       ACKUser: data.ackUser,
       ACKTime: data.ACKTime
@@ -786,7 +771,7 @@ io.on('connection', (socket) => {
 			io.to(`${clientID}`).emit('vps-send-data', {
           data: DataList[OS_index_client]
 			})
-		}, 500);
+		}, 200);
 		
 	})
 })
