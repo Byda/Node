@@ -50,7 +50,8 @@ async function CreateExcel(OS_Type){
     worksheet.cell(startRow + i, 11).number(alarms[i].LOW);
     worksheet.cell(startRow + i, 12).number(alarms[i].HIGH);
     worksheet.cell(startRow + i, 13).number(alarms[i].DEADBAND);
-    worksheet.cell(startRow + i, 14).string((new Date(alarms[i].startTime)).toString());
+    worksheet.cell(startRow + i, 14).string((new Date(alarms[i].startTime).toLocaleString("en-US",{timeZone: "Asia/Bangkok"})).toString());
+    worksheet.cell(startRow +i, 16).bool((alarms[i].ACK));
     worksheet.cell(startRow + i, 15).number((alarms[i].duration));
     worksheet.cell(startRow + i, 17).string(alarms[i].ACKUser);
     if(alarms[i].ACKTime)

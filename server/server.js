@@ -621,7 +621,7 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
          				 var i = dataValue.value.value ? 1 : 0
           				DataList[OS_index][index].value = i
          		 	} else {
-            				io.emit("vps-send-delay", {
+					io.emit("vps-send-delay", {
               					delay: Date.now() % 10000 - dataValue.value.value
             			})
           		}} else {
@@ -766,13 +766,12 @@ io.on('connection', (socket) => {
 			})
 
 	socket.on('client-send-OS_index', (clientID, OS_index_client) => {
-
 		setInterval(function(){
 			io.to(`${clientID}`).emit('vps-send-data', {
           data: DataList[OS_index_client]
 			})
 		}, 200);
-		
+
 	})
 })
 async function update (alarm){
