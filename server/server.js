@@ -275,7 +275,7 @@ const {Server} = require('socket.io')
 const io = new Server(server)
 
 
-const routeLogin = require('./routes/login')
+const w_routeLogin = require('./routes/account')
 
 const ConnectDB = async ()=>{
     try {
@@ -286,11 +286,26 @@ const ConnectDB = async ()=>{
     }
 }
 
+
 ConnectDB()
 
 app.use(express.json())
 
-app.engine('hbs', exphbs.engine({layoutsDir: './views/_layouts', defaultLayout: 'main.hbs', partialsDir: './views/_partials', extname: '.hbs', helpers: { section: hbs_sections()} }));
+app.engine('hbs', exphbs.engine(
+  {layoutsDir: './views/_layouts', defaultLayout: 'main.hbs', partialsDir: './views/_partials', extname: '.hbs', 
+  helpers: { 
+    section: hbs_sections(),
+    switch: function(value, options) {
+      this.switch_value = value;
+      return options.fn(this);
+    },
+    case: function(value, options) {
+      if (value == this.switch_value) {
+        return options.fn(this);
+      }
+    }
+  } 
+  }));
 app.set('view engine', 'hbs')
 app.use(express.static(__dirname + "/public"))
 app.use(bodyParser.json())
@@ -303,8 +318,13 @@ app.use(session({
   cookie: {}
 }))
 
-app.use('/home', require("./routes/home"))
-app.use('/login', routeLogin)
+app.use(async(req, res, next)=>{
+  var types = [{id: 0, name: "Khi thai"},{id: 1, name: "Khong khi"},{id: 2, name: "Nuoc thai"},{id: 3, name: "Nuoc mat"},]
+  var stations = InforList
+  res.locals.lcStations = stations,
+  res.locals.lcTypes = types
+  next();
+})
 
 app.use(async(req, res, next)=>{
   if(req.session.isAuthenticated === null){
@@ -314,16 +334,31 @@ app.use(async(req, res, next)=>{
   res.locals.lcUser = req.session.userAuth;
   next();
 })
+app.use('/', w_routeLogin)
+app.use('/home', require("./routes/home"))
+app.use('/account', w_routeLogin)
+app.use('/login', require('./routes/login'))
 
 app.get('/trend', (req, res) =>{
     res.render('trend');
 })
-app.get('/tram1', (req, res) =>{
-  res.render('tram1');
+// app.get('/tram1', (req, res) =>{
+//   res.render('tram1');
+// })
+// app.get('/tram2', (req, res) =>{
+//   res.render('tram2');
+// })
+// app.get('/tram3', (req, res) =>{
+//   res.render('tram3');
+// })
+
+app.get('/write', (req, res) =>{
+  res.render('write');
 })
-app.get('/notifications', (req, res)=>{
-  res.render('notifications')
-})
+app.use('/_trend', require("./routes/_trend"))
+
+app.use('/report', require('./routes/report'))
+app.use('/alarm', require('./routes/alarm'))
 
 //const nodesRouter = require('./routes/nodes');
 //app.use('/nodes', nodesRouter)
@@ -407,6 +442,7 @@ for(i=0; i<InforList.length; i++) {
     }else if(InforList[i].OS_Type == 4) { //Bach khoa
       _Data[0] = new Data("Button ON", 0, "", 0, 0, 0, 0, 3)
       _Data[1] = new Data("Button OFF", 0, "", 0, 0, 0, 0, 3)
+      _Data[2] = new Data("Delay", 0, "ms", 0, 0, 0, 0, 3)
     }
 
     DataList[i] = _Data
@@ -516,7 +552,7 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
              publishingEnabled: true,
              requestedLifetimeCount: 10000,
              requestedMaxKeepAliveCount: 10,
-             requestedPublishingInterval: 500
+             requestedPublishingInterval: 100
            };
 
 
@@ -569,7 +605,7 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
           }
 
            const monitoringParamaters = {
-             samplingInterval: 500,
+             samplingInterval: 100,
              discardOldest: true,
              queueSize: 10
         };
@@ -581,16 +617,20 @@ async function broadcastData(OS_index, OS_Type, URL, numIndicator) {
              (err, monitoredItems) => {
                	monitoredItems.on("changed", function(err, dataValue, index) {
 			if(OS_Type == 4) {
-				var i = dataValue.value.value ? 1 : 0
-				console.log(i)
-				DataList[OS_index][index].value = i
-			} else {
+				if(index == 0 || index == 1) {
+         				 var i = dataValue.value.value ? 1 : 0
+          				DataList[OS_index][index].value = i
+         		 	} else {
+					io.emit("vps-send-delay", {
+              					delay: Date.now() % 10000 - dataValue.value.value
+            			})
+          		}} else {
         			DataList[OS_index][index].value = dataValue.value.value.toFixed(2)
         			DataList[OS_index][index].calculateAlarm
 				if(DataList[OS_index][index].catchNonAckAlarm){
               console.log(DataList[OS_index][index].pre_severity + "  "+ DataList[OS_index][index].severity)
               const newAlarm = new Alarm({
-                OS_ID: InforList[OS_index].id,
+		OS_ID: InforList[OS_index].id,
 		OS_Type: InforList[OS_index].OS_Type,
                 OS_Location: InforList[OS_index].OS_Location,
                 OS_Number: InforList[OS_index].OS_Number,
@@ -648,7 +688,7 @@ io.on('connection', (socket) => {
                 //console.log(dt)
                 run = rn
                 var nodesToWrite = {
-                                nodeId: resolveNodeId("ns=2;i=11116"),
+                                nodeId: resolveNodeId("ns=2;i=11104"),
                                 attributeId: AttributeIds.Value,
                                 value: {
                                         value: {
@@ -657,7 +697,7 @@ io.on('connection', (socket) => {
                                         }
                                 }
                         };
-                        the_session[2].write(nodesToWrite, function(err,data) {
+                        the_session[4].write(nodesToWrite, function(err,data) {
                                 if (err) {
                                         console.log("Fail to write" );
                                         console.log(data);
@@ -673,7 +713,7 @@ io.on('connection', (socket) => {
 		//console.log(dt)
 		duty = dt
 		var nodesToWrite = {
-                                nodeId: resolveNodeId("ns=2;i=11115"),
+                                nodeId: resolveNodeId("ns=2;i=11105"),
                                 attributeId: AttributeIds.Value,
                                 value: {
                                         value: {
@@ -682,7 +722,7 @@ io.on('connection', (socket) => {
                                         }
                                 }
                         };
-                        the_session[2].write(nodesToWrite, function(err,data) {
+                        the_session[4].write(nodesToWrite, function(err,data) {
                                 if (err) {
                                         console.log("Fail to write" );
                                         console.log(data);
@@ -695,28 +735,29 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('alarmLog', (OS_index, data) => {
-		console.log(OS_index)
-		console.log(data)
+		// console.log(OS_index)
+		// console.log(data)
 		DataList[InforList[OS_index].OS_Type][data.id].ACK = data.ACK
 		DataList[InforList[OS_index].OS_Type][data.id].ackUser = data.ackUser
 		DataList[InforList[OS_index].OS_Type][data.id].ACKTime = data.ACKTime
 		
 		const newAlarm = new Alarm({
+      OS_ID: InforList[OS_index].id,	
       OS_Type: InforList[OS_index].OS_Type,
       OS_Location: InforList[OS_index].OS_Location,
       OS_Number: InforList[OS_index].OS_Number,
       indicator: data.indicator, 
       value: data.value,
       unit: data.unit,
-      severity: data.pre_severity,
-      content: data.pre_content,
+      severity: DataList[InforList[OS_index].OS_Type][data.id].pre_severity,
+      content: DataList[InforList[OS_index].OS_Type][data.id].pre_content,
       LOWLOW: data.LOWLOW,
       HIGHHIGH: data.HIGHHIGH,
       LOW: data.LOW,
       HIGH: data.HIGH,
       DEADBAND: data.DEAD_BAND,
       startTime: data.startTime,
-      duration: data.pre_duration,
+      duration: DataList[InforList[OS_index].OS_Type][data.id].pre_duration,
       ACK: data.ACK,
       ACKUser: data.ackUser,
       ACKTime: data.ACKTime
@@ -725,14 +766,12 @@ io.on('connection', (socket) => {
 			})
 
 	socket.on('client-send-OS_index', (clientID, OS_index_client) => {
-
 		setInterval(function(){
 			io.to(`${clientID}`).emit('vps-send-data', {
-                                data: DataList[OS_index_client]
-				
+          data: DataList[OS_index_client]
 			})
-		}, 500);
-		
+		}, 200);
+
 	})
 })
 async function update (alarm){
